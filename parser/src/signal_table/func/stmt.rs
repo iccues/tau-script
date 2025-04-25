@@ -3,6 +3,7 @@ use error::Result;
 
 use super::expr::Expr;
 
+#[derive(Debug)]
 pub enum Stmt {
     Expr(Box<Expr>),
     Def,

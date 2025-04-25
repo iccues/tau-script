@@ -1,4 +1,6 @@
-use super::Object;
+use crate::object_box::ObjectBox;
+
+use super::{Object, ObjectTrait};
 
 #[derive(Debug)]
 pub struct String_ {
@@ -6,9 +8,9 @@ pub struct String_ {
 }
 
 impl String_ {
-    pub fn new(literal: &str) -> Self {
+    pub fn new(literal: &str) -> Object {
         let value = literal[1..literal.len() - 1].to_string();
-        String_ { value }
+        ObjectBox::new(String_ { value })
     }
 
     pub fn to_string_row(&self) -> String {
@@ -16,12 +18,12 @@ impl String_ {
     }
 }
 
-impl Object for String_ {
+impl ObjectTrait for String_ {
     fn to_string_row(&self) -> String {
         self.value.clone()
     }
 
-    fn get_member(&self, name: &str) -> super::ObjectBox {
+    fn get_member(&self, name: &str) -> super::Object {
         match name {
             _ => panic!("Member not found"),
         }

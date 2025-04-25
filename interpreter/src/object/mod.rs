@@ -1,30 +1,35 @@
-use std::fmt::Debug;
+use std::{any::Any, fmt::Debug};
 
 use downcast_rs::{impl_downcast, Downcast};
+
+use crate::object_box::ObjectBox;
 
 pub mod string;
 pub mod number;
 pub mod object_fn;
 pub mod tuple;
+pub mod env;
+pub mod closure;
 
-pub type ObjectBox = Box<dyn Object>;
+pub type Object = ObjectBox<dyn ObjectTrait>;
 
-pub trait Object: Downcast + Debug {
+pub trait ObjectTrait: Downcast + Debug + Any {
     fn to_string_row(&self) -> String;
-    fn get_member(&self, _name: &str) -> ObjectBox {
+    fn get_member(&self, name: &str) -> Object {
+        let _ = name;
         panic!("Member not found");
     }
-    fn call(&self, _input: ObjectBox) -> ObjectBox {
+    fn call(&self, input: Object) -> Object {
+        let _ = input;
         panic!("Not callable");
     }
 }
 
-impl_downcast!(Object);
+impl_downcast!(ObjectTrait);
 
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::object::number::Integer;
     use crate::object::tuple::Tuple;
 
@@ -37,8 +42,8 @@ mod tests {
     #[test]
     fn test_tuple() {
         let tuple = Tuple::new(vec![
-            Box::new(Integer::new("42")),
-            Box::new(Integer::new("24")),
+            Integer::new("42"),
+            Integer::new("24"),
         ]);
         assert_eq!(tuple.to_string_row(), "(42, 24)");
     }
@@ -46,10 +51,9 @@ mod tests {
     #[test]
     fn test_integer_add() {
         let integer = Integer::new("42");
-        let result = integer.get_member("add").call(Box::new(Tuple::new(vec![
-            Box::new(Integer::new("42")),
-            Box::new(Integer::new("24")),
-        ])));
+        let result = integer.get_member("add").call(Tuple::new(vec![
+            Integer::new("24"),
+        ]));
         assert_eq!(result.to_string_row(), "66");
     }
 }

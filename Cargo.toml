@@ -1,3 +1,11 @@
+[package]
+name = "tau-csript"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+executor = { path = "executor" }
+
 [workspace]
 members = [
     "parser",

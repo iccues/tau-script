@@ -15,6 +15,11 @@ version = "0.1.0"
 [[package]]
 name = "executor"
 version = "0.1.0"
+dependencies = [
+ "interpreter",
+ "lexer",
+ "parser",
+]
 
 [[package]]
 name = "interpreter"
@@ -38,4 +43,11 @@ version = "0.1.0"
 dependencies = [
  "error",
  "lexer",
+]
+
+[[package]]
+name = "tau-csript"
+version = "0.1.0"
+dependencies = [
+ "executor",
 ]

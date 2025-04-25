@@ -1,6 +1,6 @@
-use crate::object::tuple::Tuple;
+use crate::{object::tuple::Tuple, object_box::ObjectBox};
 
-use super::{object_fn::ObjectFn, Object, ObjectBox};
+use super::{closure::Closure, object_fn::ObjectTraitFn, Object, ObjectTrait};
 
 #[derive(Debug)]
 pub struct Integer {
@@ -8,32 +8,39 @@ pub struct Integer {
 }
 
 impl Integer {
-    pub fn new(literal: &str) -> Self {
+    pub fn new(literal: &str) -> Object {
         let value = literal.parse::<i64>().unwrap();
-        Integer { value }
+        ObjectBox::new(Integer { value })
     }
 
-    pub fn add(input: ObjectBox) -> ObjectBox {
+    pub fn add(input: Object) -> Object {
         match input.downcast::<Tuple>().unwrap().deconst() {
             [a, b] => {
-                let a = (&**a).downcast_ref::<Integer>().unwrap();
-                let b = (&**b).downcast_ref::<Integer>().unwrap();
+                let a = a.clone().downcast::<Integer>().unwrap();
+                let b = b.clone().downcast::<Integer>().unwrap();
                 let result = a.value + b.value;
-                Box::new(Integer { value: result })
+                ObjectBox::new(Integer { value: result })
             }
             _ => panic!("Invalid input"),
         }
     }
+
+    pub fn add_curry(&self) -> Object {
+        Closure::new(ObjectBox::new(
+            Integer::add as ObjectTraitFn),
+            vec![Some(ObjectBox::new(Self { value: self.value }))]
+        )
+    }
 }
 
-impl Object for Integer {
+impl ObjectTrait for Integer {
     fn to_string_row(&self) -> String {
         self.value.to_string()
     }
 
-    fn get_member(&self, name: &str) -> super::ObjectBox {
+    fn get_member(&self, name: &str) -> super::Object {
         match name {
-            "add" => Box::new(Integer::add as ObjectFn),
+            "add" => self.add_curry(),
             _ => panic!("Member not found"),
         }
     }

@@ -1,21 +1,23 @@
-use super::{Object, ObjectBox};
+use crate::object_box::ObjectBox;
+
+use super::{ObjectTrait, Object};
 
 #[derive(Debug)]
 pub struct Tuple {
-    value: Vec<ObjectBox>,
+    value: Vec<Object>,
 }
 
 impl Tuple {
-    pub fn new(value: Vec<ObjectBox>) -> Self {
-        Tuple { value }
+    pub fn new(value: Vec<Object>) -> Object {
+        ObjectBox::new(Tuple { value })
     }
     
-    pub fn deconst(&self) -> &[ObjectBox] {
+    pub fn deconst(&self) -> &[Object] {
         &self.value
     }
 }
 
-impl Object for Tuple {
+impl ObjectTrait for Tuple {
     fn to_string_row(&self) -> String {
         let mut result = String::from("(");
         for (i, value) in self.value.iter().enumerate() {
@@ -28,7 +30,7 @@ impl Object for Tuple {
         result
     }
 
-    fn get_member(&self, name: &str) -> super::ObjectBox {
+    fn get_member(&self, name: &str) -> super::Object {
         match name {
             _ => panic!("Member not found"),
         }
