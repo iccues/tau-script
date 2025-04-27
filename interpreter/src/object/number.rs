@@ -1,6 +1,8 @@
+use std::rc::Rc;
+
 use crate::{object::tuple::Tuple, object_box::ObjectBox};
 
-use super::{closure::Closure, object_fn::ObjectTraitFn, Object, ObjectTrait};
+use super::{closure::Closure, object_fn::ObjectTraitFn, undefined::Undefined, Object, ObjectTrait};
 
 #[derive(Debug)]
 pub struct Integer {
@@ -26,8 +28,8 @@ impl Integer {
     }
 
     pub fn add_curry(&self) -> Object {
-        Closure::new(ObjectBox::new(
-            Integer::add as ObjectTraitFn),
+        Closure::new(
+            ObjectBox::new(Integer::add as ObjectTraitFn),
             vec![Some(ObjectBox::new(Self { value: self.value }))]
         )
     }
@@ -38,10 +40,10 @@ impl ObjectTrait for Integer {
         self.value.to_string()
     }
 
-    fn get_member(&self, name: &str) -> super::Object {
+    fn get_member(self: Rc<Self>, name: &str) -> super::Object {
         match name {
             "add" => self.add_curry(),
-            _ => panic!("Member not found"),
+            _ => Undefined::new(),
         }
     }
 }

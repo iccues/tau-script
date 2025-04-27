@@ -20,6 +20,9 @@ impl Exec for Expr {
                     Operator::Plus => {
                         left.get_member("add").call(Tuple::new(vec![right]))
                     }
+                    Operator::Eq => {
+                        left.get_member("set").call(Tuple::new(vec![right]))
+                    }
                     _ => unimplemented!(),
                 }
             }

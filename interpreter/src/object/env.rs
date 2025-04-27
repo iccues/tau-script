@@ -1,8 +1,8 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, ops::Deref, rc::Rc};
 
 use crate::object_box::ObjectBox;
 
-use super::{ObjectTrait, Object};
+use super::{variable::Variable, Object, ObjectTrait};
 
 #[derive(Debug)]
 pub struct Env {
@@ -20,7 +20,19 @@ impl ObjectTrait for Env {
         "env".to_string()
     }
     
-    fn get_member(&self, name: &str) -> Object {
-        self.map.get(name).unwrap().clone()
+    fn get_member(self: Rc<Self>, name: &str) -> Object {
+        // self.map.get(name).unwrap().clone()
+        if let Some(ret) = self.map.get(name) {
+            ret.clone()
+        } else {
+            let var = Variable::new();
+
+            #[allow(invalid_reference_casting)]
+            unsafe {
+                &mut *(self.deref() as *const Env as *mut Env) 
+            }.map.insert(name.to_string(), var.clone());
+
+            var
+        }
     }
 }

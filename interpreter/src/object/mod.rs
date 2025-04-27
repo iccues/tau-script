@@ -1,6 +1,7 @@
-use std::{any::Any, fmt::Debug};
+use std::{any::Any, fmt::Debug, rc::Rc};
 
 use downcast_rs::{impl_downcast, Downcast};
+use undefined::Undefined;
 
 use crate::object_box::ObjectBox;
 
@@ -10,14 +11,16 @@ pub mod object_fn;
 pub mod tuple;
 pub mod env;
 pub mod closure;
+pub mod variable;
+pub mod undefined;
 
 pub type Object = ObjectBox<dyn ObjectTrait>;
 
 pub trait ObjectTrait: Downcast + Debug + Any {
     fn to_string_row(&self) -> String;
-    fn get_member(&self, name: &str) -> Object {
+    fn get_member(self: Rc<Self>, name: &str) -> Object {
         let _ = name;
-        panic!("Member not found");
+        Undefined::new()
     }
     fn call(&self, input: Object) -> Object {
         let _ = input;

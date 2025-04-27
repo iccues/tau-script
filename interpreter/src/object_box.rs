@@ -1,6 +1,6 @@
 use std::{ops::{Deref, DerefMut}, rc::Rc};
 
-use crate::object::ObjectTrait;
+use crate::object::{undefined::Undefined, ObjectTrait};
 
 #[derive(Debug)]
 pub struct ObjectBox<T: 'static + ?Sized> {
@@ -14,11 +14,30 @@ impl ObjectBox<dyn ObjectTrait> {
         }
     }
 
+    pub fn new_rc<T: 'static + ObjectTrait>(inner: Rc<T>) -> Self {
+        Self { inner }
+    }
+
     pub fn downcast<U: ObjectTrait>(self) -> Result<ObjectBox<U>, Self> {
+        if !self.inner.clone().get_member("get").is::<Undefined>() {
+            return self.inner.clone().get_member("get").downcast::<U>();
+        }
+
         match self.inner.downcast_rc::<U>() {
             Ok(rc) => Ok(ObjectBox { inner: rc }),
             Err(rc) => Err(ObjectBox { inner: rc }),
         }
+    }
+
+    pub fn downcast_unget<U: ObjectTrait>(self) -> Result<ObjectBox<U>, Self> {
+        match self.inner.downcast_rc::<U>() {
+            Ok(rc) => Ok(ObjectBox { inner: rc }),
+            Err(rc) => Err(ObjectBox { inner: rc }),
+        }
+    }
+
+    pub fn get_member(&self, name: &str) -> ObjectBox<dyn ObjectTrait> {
+        self.inner.clone().get_member(name)
     }
 }
 
@@ -47,3 +66,11 @@ impl<T: ?Sized> DerefMut for ObjectBox<T> {
         }
     }
 }
+
+
+// impl<T: ?Sized> std::ops::Receiver for ObjectBox<T> {
+    
+// }
+// impl Rece for  {
+    
+// }

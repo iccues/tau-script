@@ -22,10 +22,4 @@ impl ObjectTrait for String_ {
     fn to_string_row(&self) -> String {
         self.value.clone()
     }
-
-    fn get_member(&self, name: &str) -> super::Object {
-        match name {
-            _ => panic!("Member not found"),
-        }
-    }
 }

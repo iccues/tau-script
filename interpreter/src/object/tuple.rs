@@ -29,10 +29,4 @@ impl ObjectTrait for Tuple {
         result.push_str(")");
         result
     }
-
-    fn get_member(&self, name: &str) -> super::Object {
-        match name {
-            _ => panic!("Member not found"),
-        }
-    }
 }
