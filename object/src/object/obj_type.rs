@@ -7,8 +7,6 @@ pub struct ObjType {
 
 impl ObjectTrait for ObjType {}
 
-unsafe impl Sync for ObjType {}
-
 impl ObjType {
     fn call_fn(_: Object, _: Object) -> Object {
         panic!("call not implemented")
@@ -19,12 +17,9 @@ impl ObjType {
     }
 }
 
-pub static OBJ_TYPE: ObjType = ObjType {
-    call: |_, _| panic!("call not implemented"),
+static OBJ_TYPE: ObjType = ObjType {
+    call: ObjType::call_fn,
     get_member: ObjType::get_member_fn,
 };
 
-pub static OBJ_TYPE_BOX: Object = Object {
-    data: &OBJ_TYPE as *const ObjType as *mut (),
-    obj_type: &OBJ_TYPE_BOX as *const Object as *mut Object,
-};
+pub static OBJ_TYPE_BOX: Object = Object::from_raw(&OBJ_TYPE, &OBJ_TYPE_BOX);

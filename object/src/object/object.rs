@@ -33,7 +33,9 @@ impl Object {
     }
 
     pub fn get_member_(&self, name: &str) -> Object {
-        (self.get_obj_type().get_member)(self.clone(), name)
+        let get_member = self.get_obj_type().get_member;
+        get_member(self.clone(), name)
+        // (self.get_obj_type().get_member)(self.clone(), name)
     }
 
     pub fn call_(&self, input: Object) -> Object {
