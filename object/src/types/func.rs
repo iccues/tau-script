@@ -6,8 +6,8 @@ pub struct Func {
 
 impl ObjectTrait for Func {
     fn call_fn(this: Object, args: Object) -> Object {
-        let func: &Func = this.get_data_as::<Func>();
-        (func.func)(args)
+        let func = &this.get_data_as::<Func>().func;
+        func(args)
     }
 }
 

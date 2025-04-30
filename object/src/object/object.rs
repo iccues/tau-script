@@ -33,18 +33,14 @@ impl Object {
     }
 
     pub fn get_member_(&self, name: &str) -> Object {
-        let get_member = self.get_obj_type().get_member;
-        get_member(self.clone(), name)
-        // (self.get_obj_type().get_member)(self.clone(), name)
+        // let get_member = self.get_obj_type().get_member;
+        // get_member(self.clone(), name)
+        (self.get_obj_type().get_member)(self.clone(), name)
     }
 
     pub fn call_(&self, input: Object) -> Object {
+        // let call = self.get_obj_type().call;
+        // call(self.clone(), input)
         (self.get_obj_type().call)(self.clone(), input)
-    }
-}
-
-impl Drop for Object {
-    fn drop(&mut self) {
-        // self.get_obj_head().ref_count_sub();
     }
 }

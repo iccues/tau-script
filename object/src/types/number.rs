@@ -1,15 +1,16 @@
 use crate::object::{object::Object, object_trait::ObjectTrait};
 
-use super::func::Func;
+use super::{closure::Closure, func::Func, tuple::Tuple};
 
+#[derive(Clone)]
 pub struct Integer {
     pub value: i32,
 }
 
 impl ObjectTrait for Integer {
-    fn get_member_fn(_this: Object, name: &str) -> Object {
+    fn get_member_fn(this: Object, name: &str) -> Object {
         match name {
-            "incr" => Func::new(Integer::incr),
+            "add" => this.get_data_as::<Integer>().add_curry(),
             _ => panic!("get_member not implemented"),
         }
     }
@@ -20,10 +21,24 @@ impl Integer {
         Self::from_data(Integer { value })
     }
 
-    fn incr(input: Object) -> Object {
-        let integer = input.get_data_as::<Integer>();
-        let result = integer.value + 1; // Example operation
-        Integer::new(result)
+
+    fn add(input: Object) -> Object {
+        match input.get_data_as::<Tuple>().elements.as_slice() {
+            [a, b] => {
+                let a = a.get_data_as::<Integer>();
+                let b = b.get_data_as::<Integer>();
+                let result = a.value + b.value;
+                Integer::new(result)
+            }
+            _ => panic!("Invalid input"),
+        }
+    }
+
+    fn add_curry(&self) -> Object {
+        Closure::new(
+            Func::new(Integer::add),
+            vec![Some(Self::from_data(self.clone()))],
+        )
     }
 }
 
@@ -32,11 +47,14 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_integer() {
-        let integer = Integer::new(42);
-        let incr_int = integer.get_member_("incr").call_(integer.clone());
+    fn test_add() {
+        let int1 = Integer::new(42);
+        let int2 = Integer::new(1);
+
+        let sum = int1.get_member_("add").call_(Tuple::new(vec![int2]));
+
         assert_eq!(
-            incr_int.get_data_as::<Integer>().value,
+            sum.get_data_as::<Integer>().value,
             43
         );
     }

@@ -3,7 +3,7 @@ use crate::object::{object::Object, object_trait::ObjectTrait};
 use super::number::Integer;
 
 pub struct Tuple {
-    elements: Vec<Object>,
+    pub elements: Vec<Object>,
 }
 
 impl ObjectTrait for Tuple {
@@ -42,7 +42,6 @@ mod tests {
         let tuple = Tuple::new(vec![Integer::new(1), Integer::new(2), Integer::new(3)]);
 
         let len = tuple.get_member_("len");
-        let len2 = tuple.get_member_("len");
         assert_eq!(len.get_data_as::<Integer>().value, 3);
     }
 }
