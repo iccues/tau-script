@@ -2,7 +2,7 @@ use crate::object::{object::Object, object_trait::ObjectTrait};
 
 use super::{closure::Closure, func::Func, tuple::Tuple};
 
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Integer {
     pub value: i32,
 }
@@ -10,7 +10,7 @@ pub struct Integer {
 impl ObjectTrait for Integer {
     fn get_member_fn(this: Object, name: &str) -> Object {
         match name {
-            "add" => this.get_data_as::<Integer>().add_curry(),
+            "add" => this.get_data::<Integer>().unwrap().add_curry(),
             _ => panic!("get_member not implemented"),
         }
     }
@@ -23,10 +23,10 @@ impl Integer {
 
 
     fn add(input: Object) -> Object {
-        match input.get_data_as::<Tuple>().elements.as_slice() {
+        match input.get_data::<Tuple>().unwrap().elements.as_slice() {
             [a, b] => {
-                let a = a.get_data_as::<Integer>();
-                let b = b.get_data_as::<Integer>();
+                let a = a.get_data::<Integer>().unwrap();
+                let b = b.get_data::<Integer>().unwrap();
                 let result = a.value + b.value;
                 Integer::new(result)
             }
@@ -51,10 +51,10 @@ mod tests {
         let int1 = Integer::new(42);
         let int2 = Integer::new(1);
 
-        let sum = int1.get_member_("add").call_(Tuple::new(vec![int2]));
+        let sum = int1.get_member("add").call(Tuple::new(vec![int2]));
 
         assert_eq!(
-            sum.get_data_as::<Integer>().value,
+            sum.get_data::<Integer>().unwrap().value,
             43
         );
     }

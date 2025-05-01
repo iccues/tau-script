@@ -1,3 +1,5 @@
+use std::mem::transmute;
+
 use super::{obj_type::ObjType, object_trait::ObjectTrait};
 
 #[derive(Clone)]
@@ -24,23 +26,27 @@ impl Object {
         }
     }
 
-    pub fn get_data_as<T: ObjectTrait>(&self) -> &mut T {
+    pub unsafe fn get_data_uncheck<T: ObjectTrait>(&self) -> &mut T { // unsafe
         unsafe { &mut *(self.data as *mut T) }
     }
 
-    pub fn get_obj_type(&self) -> &ObjType {
-        unsafe { (&*self.obj_type).get_data_as::<ObjType>() }
+    pub fn get_data<T: ObjectTrait>(&self) -> Option<&mut T> {
+        if let Some(data) = (T::OBJ_TYPE_BOX.get_obj_type().match_)(T::OBJ_TYPE_BOX, self.clone()) {
+            Some(unsafe { transmute(data.get_data_uncheck::<T>()) })
+        } else {
+            None
+        }
     }
 
-    pub fn get_member_(&self, name: &str) -> Object {
-        // let get_member = self.get_obj_type().get_member;
-        // get_member(self.clone(), name)
+    pub fn get_obj_type(&self) -> &ObjType {
+        unsafe { (&*self.obj_type).get_data_uncheck::<ObjType>() }
+    }
+
+    pub fn get_member(&self, name: &str) -> Object {
         (self.get_obj_type().get_member)(self.clone(), name)
     }
 
-    pub fn call_(&self, input: Object) -> Object {
-        // let call = self.get_obj_type().call;
-        // call(self.clone(), input)
+    pub fn call(&self, input: Object) -> Object {
         (self.get_obj_type().call)(self.clone(), input)
     }
 }

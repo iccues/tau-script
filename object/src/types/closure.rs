@@ -9,11 +9,11 @@ pub struct Closure {
 
 impl ObjectTrait for Closure {
     fn call_fn(this: Object, args: Object) -> Object {
-        let this = this.get_data_as::<Closure>();
-        let args = args.get_data_as::<Tuple>();
+        let this = this.get_data::<Closure>().unwrap();
+        let args = args.get_data::<Tuple>().unwrap();
 
         let args = this.curry(&args.elements);
-        this.func.call_(Tuple::new(args.unwrap()))
+        this.func.call(Tuple::new(args.unwrap()))
     }
 }
 

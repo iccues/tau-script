@@ -22,7 +22,7 @@ impl Tuple {
     }
 
     pub fn len(this: Object) -> Object {
-        let tuple: &Tuple = this.get_data_as::<Tuple>();
+        let tuple: &Tuple = this.get_data::<Tuple>().unwrap();
         Integer::new(tuple.elements.len() as i32)
     }
 
@@ -41,7 +41,7 @@ mod tests {
     fn test_tuple() {
         let tuple = Tuple::new(vec![Integer::new(1), Integer::new(2), Integer::new(3)]);
 
-        let len = tuple.get_member_("len");
-        assert_eq!(len.get_data_as::<Integer>().value, 3);
+        let len = tuple.get_member("len");
+        assert_eq!(len.get_data::<Integer>().unwrap().value, 3);
     }
 }

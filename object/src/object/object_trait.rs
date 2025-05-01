@@ -4,6 +4,7 @@ pub trait ObjectTrait {
     const OBJ_TYPE: ObjType = ObjType {
         call: Self::call_fn,
         get_member: Self::get_member_fn,
+        match_: Self::match_fn,
     };
     const OBJ_TYPE_TYPE: &Object = &OBJ_TYPE_BOX;
 
@@ -16,6 +17,14 @@ pub trait ObjectTrait {
     fn call_fn(this: Object, args: Object) -> Object {
         let _ = (this, args);
         panic!("call not implemented")
+    }
+    fn match_fn(this: Object, other: Object) -> Option<Object> {
+        let this = unsafe { this.get_data_uncheck::<ObjType>() };
+        if this == other.get_obj_type() {
+            Some(other.clone())
+        } else {
+            None
+        }
     }
 
     fn from_data(data: Self) -> Object
