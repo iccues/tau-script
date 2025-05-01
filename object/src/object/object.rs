@@ -13,15 +13,12 @@ unsafe impl Send for Object {}
 
 impl Object {
     pub fn new<T: ObjectTrait>(data: T, obj_type: &Object) -> Self {
-        Object {
-            data: Box::into_raw(Box::new(data)) as *mut (),
-            obj_type: obj_type as *const Object as *mut Object,
-        }
+        Object::from_raw(Box::into_raw(Box::new(data)), obj_type)
     }
 
-    pub const fn from_raw<T: ObjectTrait + 'static>(data: &T, obj_type: &Object) -> Self {
+    pub const fn from_raw<T: ObjectTrait>(data: *const T, obj_type: &Object) -> Self {
         Object {
-            data: data as *const T as *mut (),
+            data: data as *mut (),
             obj_type: obj_type as *const Object as *mut Object,
         }
     }
@@ -48,5 +45,31 @@ impl Object {
 
     pub fn call(&self, input: Object) -> Object {
         (self.get_obj_type().call)(self.clone(), input)
+    }
+
+    pub fn match_(&self, other: Object) -> Option<Object> {
+        (self.get_obj_type().match_)(self.clone(), other)
+    }
+
+    pub fn drop(&mut self) {
+        if self.data.is_null() {
+            return;
+        }
+        (self.get_obj_type().drop)(self.clone());
+        unsafe {
+            let _ = Box::from_raw(self.data);
+        };
+        self.data = std::ptr::null_mut();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::types::number::Integer;
+
+    #[test]
+    fn test_drop() {
+        let mut obj = Integer::new(42);
+        obj.drop();
     }
 }

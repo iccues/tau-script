@@ -5,33 +5,18 @@ pub struct ObjType {
     pub call: fn(Object, Object) -> Object,
     pub get_member: fn(Object, &str) -> Object,
     pub match_: fn(Object, Object) -> Option<Object>,
+    pub drop: fn(Object),
 }
 
 impl ObjectTrait for ObjType {}
 
-impl ObjType {
-    fn call_fn(_: Object, _: Object) -> Object {
-        panic!("call not implemented")
-    }
-
-    fn get_member_fn(_: Object, _: &str) -> Object {
-        panic!("get_member not implemented")
-    }
-
-    fn match_fn(this: Object, other: Object) -> Option<Object> {
-        let this = unsafe { this.get_data_uncheck::<ObjType>() };
-        if this == other.get_obj_type() {
-            Some(other.clone())
-        } else {
-            None
-        }
-    }
-}
+impl ObjType {}
 
 static OBJ_TYPE: ObjType = ObjType {
     call: ObjType::call_fn,
     get_member: ObjType::get_member_fn,
     match_: ObjType::match_fn,
+    drop: ObjType::drop_fn,
 };
 
 pub static OBJ_TYPE_BOX: Object = Object::from_raw(&OBJ_TYPE, &OBJ_TYPE_BOX);

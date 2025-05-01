@@ -1,10 +1,13 @@
+use std::ptr::drop_in_place;
+
 use super::{obj_type::{ObjType, OBJ_TYPE_BOX}, object::Object};
 
-pub trait ObjectTrait {
+pub trait ObjectTrait: Sized {
     const OBJ_TYPE: ObjType = ObjType {
         call: Self::call_fn,
         get_member: Self::get_member_fn,
         match_: Self::match_fn,
+        drop: Self::drop_fn,
     };
     const OBJ_TYPE_TYPE: &Object = &OBJ_TYPE_BOX;
 
@@ -26,11 +29,14 @@ pub trait ObjectTrait {
             None
         }
     }
+    fn drop_fn(this: Object) {
+        let this = this.get_data::<Self>().unwrap();
+        unsafe {
+            drop_in_place(this);
+        }
+    }
 
-    fn from_data(data: Self) -> Object
-    where
-        Self: Sized,
-    {
+    fn from_data(data: Self) -> Object {
         Object::new(data, &Self::OBJ_TYPE_BOX)
     }
 }
