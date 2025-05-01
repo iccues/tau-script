@@ -2,10 +2,9 @@ pub mod exec;
 
 use std::io::stdin;
 
-use interpreter::object::env::Env;
 use lexer::stream::peekable::Peekable;
+use object::types::{env::Env, string::String_, tuple::Tuple};
 use parser::parse_stmt;
-
 use exec::Exec;
 
 pub fn execute() {
@@ -14,6 +13,19 @@ pub fn execute() {
     let env = Env::new();
 
     while let Ok(stmt) = parse_stmt(&mut cursor) {
-        println!("{}", stmt.exec(&env).to_string_row());
+        let ret = stmt.exec(&env);
+        if let Some(string) = ret.get_member("to_string").call(Tuple::new(vec![])).get_data::<String_>() {
+            println!("{}", string.value);
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_execute() {
+        execute();
     }
 }

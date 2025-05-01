@@ -1,7 +1,6 @@
+use object::{object::object::Object, types::{number::Integer, string::String_, tuple::Tuple}};
 use parser::signal_table::func::{expr::Expr, literal::Literal, stmt::Stmt};
 use lexer::token::operator::Operator;
-
-use interpreter::object::{number::Integer, string::String_, tuple::Tuple, Object};
 
 pub trait Exec {
     fn exec(&self, env: &Object) -> Object;
@@ -41,10 +40,10 @@ impl Exec for Literal {
     fn exec(&self, _env: &Object) -> Object {
         match self {
             Literal::String(literal) => {
-                String_::new(literal)
+                String_::new(literal.clone())
             }
             Literal::Integer(literal) => {
-                Integer::new(literal)
+                Integer::new(literal.parse().unwrap())
             }
             _ => unimplemented!(),
         }

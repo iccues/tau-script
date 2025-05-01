@@ -3,3 +3,7 @@ pub mod func;
 pub mod tuple;
 pub mod closure;
 pub mod bool;
+pub mod undefined;
+pub mod variable;
+pub mod string;
+pub mod env;

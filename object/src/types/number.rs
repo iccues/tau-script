@@ -1,6 +1,6 @@
 use crate::object::{object::Object, object_trait::ObjectTrait};
 
-use super::{closure::Closure, func::Func, tuple::Tuple};
+use super::{closure::Closure, func::Func, string::String_, tuple::Tuple};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Integer {
@@ -10,7 +10,8 @@ pub struct Integer {
 impl ObjectTrait for Integer {
     fn get_member_fn(this: Object, name: &str) -> Object {
         match name {
-            "add" => this.get_data::<Integer>().unwrap().add_curry(),
+            "add" => Integer::curry(this, Integer::add),
+            "to_string" => Integer::curry(this, Integer::to_string),
             _ => panic!("get_member not implemented"),
         }
     }
@@ -34,10 +35,24 @@ impl Integer {
         }
     }
 
-    fn add_curry(&self) -> Object {
+    fn to_string(input: Object) -> Object {
+        match input.get_data::<Tuple>().unwrap().elements.as_slice() {
+            [a] => {
+                let a = a.get_data::<Integer>().unwrap();
+                String_::new(a.value.to_string())
+            }
+            _ => panic!("Invalid input"),
+        }
+    }
+
+    fn curry<F>(this: Object, func: F) -> Object
+    where
+        F: Fn(Object) -> Object + 'static,
+    {
+        let this = this.get_data::<Integer>().unwrap();
         Closure::new(
-            Func::new(Integer::add),
-            vec![Some(Self::from_data(self.clone()))],
+            Func::new(func),
+            vec![Some(Self::from_data(this.clone()))],
         )
     }
 }
@@ -56,6 +71,18 @@ mod tests {
         assert_eq!(
             sum.get_data::<Integer>().unwrap().value,
             43
+        );
+    }
+
+    #[test]
+    fn test_to_string() {
+        let int = Integer::new(42);
+
+        let str_obj = int.get_member("to_string").call(Tuple::new(vec![]));
+
+        assert_eq!(
+            str_obj.get_data::<String_>().unwrap().value,
+            "42".to_string()
         );
     }
 }
