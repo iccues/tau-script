@@ -19,6 +19,15 @@ impl ObjectTrait for Variable {
             }
         }
     }
+
+    fn on_matched_fn(this: Object, other: Object) -> Object {
+        let this_type = this.get_data::<Variable>().unwrap();
+        if other.get_data::<Variable>().is_some() {
+            this
+        } else {
+            this_type.value.on_matched(other)
+        }
+    }
 }
 
 impl Variable {
@@ -29,7 +38,7 @@ impl Variable {
     }
 
     fn set(input: Object) -> Object {
-        match input.get_data::<Tuple>().unwrap().elements.as_slice() {
+        match input.get_data_match::<Tuple>().unwrap().elements.as_slice() {
             [a, b] => {
                 a.get_data::<Variable>().unwrap().value = b.clone();
                 a.clone()

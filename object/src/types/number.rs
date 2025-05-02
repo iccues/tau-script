@@ -24,10 +24,10 @@ impl Integer {
 
 
     fn add(input: Object) -> Object {
-        match input.get_data::<Tuple>().unwrap().elements.as_slice() {
+        match input.get_data_match::<Tuple>().unwrap().elements.as_slice() {
             [a, b] => {
-                let a = a.get_data::<Integer>().unwrap();
-                let b = b.get_data::<Integer>().unwrap();
+                let a = a.get_data_match::<Integer>().unwrap();
+                let b = b.get_data_match::<Integer>().unwrap();
                 let result = a.value + b.value;
                 Integer::new(result)
             }
@@ -36,9 +36,9 @@ impl Integer {
     }
 
     fn to_string(input: Object) -> Object {
-        match input.get_data::<Tuple>().unwrap().elements.as_slice() {
+        match input.get_data_match::<Tuple>().unwrap().elements.as_slice() {
             [a] => {
-                let a = a.get_data::<Integer>().unwrap();
+                let a = a.get_data_match::<Integer>().unwrap();
                 String_::new(a.value.to_string())
             }
             _ => panic!("Invalid input"),

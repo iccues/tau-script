@@ -28,6 +28,14 @@ impl Object {
     }
 
     pub fn get_data<T: ObjectTrait>(&self) -> Option<&mut T> {
+        if *self.get_obj_type() == T::OBJ_TYPE {
+            Some(unsafe { self.get_data_uncheck::<T>() })
+        } else {
+            None
+        }
+    }
+
+    pub fn get_data_match<T: ObjectTrait>(&self) -> Option<&mut T> {
         if let Some(data) = (T::OBJ_TYPE_BOX.get_obj_type().match_)(T::OBJ_TYPE_BOX, self.clone()) {
             Some(unsafe { transmute(data.get_data_uncheck::<T>()) })
         } else {
@@ -49,6 +57,10 @@ impl Object {
 
     pub fn match_(&self, other: Object) -> Option<Object> {
         (self.get_obj_type().match_)(self.clone(), other)
+    }
+
+    pub fn on_matched(&self, other: Object) -> Object {
+        (self.get_obj_type().on_matched)(self.clone(), other)
     }
 
     pub fn drop(&mut self) {

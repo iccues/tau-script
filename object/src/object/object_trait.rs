@@ -7,6 +7,7 @@ pub trait ObjectTrait: Sized {
         call: Self::call_fn,
         get_member: Self::get_member_fn,
         match_: Self::match_fn,
+        on_matched: Self::on_matched_fn,
         drop: Self::drop_fn,
     };
     const OBJ_TYPE_TYPE: &Object = &OBJ_TYPE_BOX;
@@ -22,12 +23,17 @@ pub trait ObjectTrait: Sized {
         panic!("call not implemented")
     }
     fn match_fn(this: Object, other: Object) -> Option<Object> {
-        let this = unsafe { this.get_data_uncheck::<ObjType>() };
-        if this == other.get_obj_type() {
-            Some(other.clone())
+        let this_type = unsafe { this.get_data_uncheck::<ObjType>() };
+        let other_matched = other.on_matched(this.clone());
+        if this_type == other_matched.get_obj_type() {
+            Some(other_matched.clone())
         } else {
             None
         }
+    }
+    fn on_matched_fn(this: Object, other: Object) -> Object {
+        let _ = other;
+        this
     }
     fn drop_fn(this: Object) {
         let this = this.get_data::<Self>().unwrap();

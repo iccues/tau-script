@@ -8,8 +8,8 @@ executor = { path = "executor" }
 
 [workspace]
 members = [
+    "lexer",
     "parser",
-    "interpreter",
-    "executor",
     "object",
+    "executor",
 ]
