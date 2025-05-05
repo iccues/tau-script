@@ -4,11 +4,11 @@ use crate::signal_table::types::Type;
 use lexer::stream::peekable::cursor::Cursor;
 use lexer::token::identifier::Identifier;
 use lexer::token::keyword::Keyword;
-use error::{ErrKind, NoneError, Result, ResultExt};
+use error::{NoneError, Result, ResultExt};
 use lexer::token::operator::Operator;
 use lexer::token::singleton_token::EofToken;
 use lexer::token::TokenBox;
-use crate::try_parse;
+use error::try_parse;
 
 use super::func::Func;
 use super::variable::Variable;
@@ -30,7 +30,6 @@ impl ModuleItem {
         Err(NoneError.into())
     }
 }
-
 
 
 #[derive(Debug)]

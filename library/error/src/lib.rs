@@ -1,6 +1,7 @@
 mod gerror;
 mod err_kind;
 mod none_error;
+mod try_parse;
 
 
 pub use gerror::{GError, GResult};

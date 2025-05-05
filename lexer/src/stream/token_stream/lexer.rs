@@ -10,8 +10,7 @@ use crate::token::operator::Operator;
 use crate::token::singleton_token::EofToken;
 use crate::token::string::StringToken;
 use crate::token::TokenBox;
-use crate::try_parse;
-
+use error::try_parse;
 pub struct Lexer {
     char_peeker: Peeker<char>,
 }

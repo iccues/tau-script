@@ -1,14 +1,12 @@
-use crate::{
-    signal_table::func::{block::Block, if_expr::IfExpr, literal::Literal},
-    try_parse,
-};
+use crate::signal_table::func::{block::Block, if_expr::IfExpr, literal::Literal};
 
-use error::{ErrKind, NoneError, Result};
+use error::{NoneError, Result};
 use lexer::{
     stream::peekable::cursor::Cursor,
     token::{identifier::Identifier, operator::Operator, ComplexBox, TokenBox}
 };
 use super::{binary_expr::BinaryExpr, call_expr::CallExpr, dot_expr::DotExpr, tuple::TupleExpr, while_expr::WhileExpr};
+use error::try_parse;
 
 #[derive(Debug)]
 pub enum Expr {

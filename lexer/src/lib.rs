@@ -5,7 +5,7 @@ use token::TokenBox;
 
 pub mod token;
 pub mod stream;
-pub mod try_parse;
+// pub mod try_parse;
 
 pub fn get_lexer(input: impl Read + 'static) -> Peeker<TokenBox> {
     let char_stream = CharStream::new(BufReader::new(input)).peeker();
