@@ -14,6 +14,10 @@ pub mod if_expr;
 pub mod while_expr;
 pub mod literal;
 pub mod stmt;
+pub mod tuple;
+pub mod call_expr;
+pub mod dot_expr;
+pub mod binary_expr;
 
 #[derive(Debug)]
 pub struct Func {

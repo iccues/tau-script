@@ -25,7 +25,7 @@ pub static OBJ_TYPE_BOX: Object = Object::from_raw(&OBJ_TYPE, &OBJ_TYPE_BOX);
 
 #[cfg(test)]
 mod tests {
-    use crate::types::{bool::Bool, number::Integer};
+    use crate::types::primitive::{bool::Bool, number::Integer};
 
     #[test]
     fn test_obj_type_match() {

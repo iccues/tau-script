@@ -6,23 +6,26 @@ use crate::{
 use error::{ErrKind, NoneError, Result};
 use lexer::{
     stream::peekable::cursor::Cursor,
-    token::{identifier::Identifier, operator::Operator, ComplexBox, TokenBox},
+    token::{identifier::Identifier, operator::Operator, ComplexBox, TokenBox}
 };
-use super::while_expr::WhileExpr;
+use super::{binary_expr::BinaryExpr, call_expr::CallExpr, dot_expr::DotExpr, tuple::TupleExpr, while_expr::WhileExpr};
 
 #[derive(Debug)]
 pub enum Expr {
-    BinaryExpr {
-        left: Box<Expr>,
-        operator: ComplexBox<Operator>,
-        right: Box<Expr>,
-    },
+
+    /// Postfixe expression
+    Call(CallExpr),
+    Dot(DotExpr),
+
+    /// Binary expression
+    Binary(BinaryExpr),
 
     /// Factors
     Block(Block),
     If(IfExpr),
     While(WhileExpr),
     Literal(Literal),
+    Tuple(TupleExpr),
 
     Identifier(String),
     UnaryExpr {
@@ -33,48 +36,24 @@ pub enum Expr {
 
 impl Expr {
     pub fn parse(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
-        let mut factors = Vec::new();
-        let mut operators: Vec<ComplexBox<Operator>> = Vec::new();
+        Self::parse_postfix(cursor)
+    }
 
-        factors.push(Self::parse_factor(cursor)?);
-
-        while cursor
-            .peek()?
-            .downcast::<Operator>()
-            .is_some_and(|o| o.priority() >= 0)
-        {
-
-            let operator = cursor.eat_type::<Operator>()?;
-
-            while !operators.is_empty()
-                && operator.priority() <= operators.last().unwrap().priority()
-            {
-                let right = factors.pop().unwrap();
-                let left = factors.pop().unwrap();
-                let operator = operators.pop().unwrap();
-                factors.push(Box::new(Expr::BinaryExpr {
-                    left,
-                    operator,
-                    right,
-                }));
-            }
-
-            operators.push(operator);
-            factors.push(Self::parse_factor(cursor)?);
+    fn parse_postfix(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
+        let mut first = Self::parse_binary(cursor)?;
+        let mut changed = true;
+        let mut t;
+        while changed {
+            (t, first) = CallExpr::try_parse(first, cursor)?;
+            changed = t;
+            (t, first) = DotExpr::try_parse(first, cursor)?;
+            changed = changed || t;
         }
+        Ok(first)
+    }
 
-        while !operators.is_empty() {
-            let right = factors.pop().unwrap();
-            let left = factors.pop().unwrap();
-            let operator = operators.pop().unwrap();
-            factors.push(Box::new(Expr::BinaryExpr {
-                left,
-                operator,
-                right,
-            }));
-        }
-
-        Ok(factors.pop().unwrap())
+    fn parse_binary(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
+        BinaryExpr::parse(cursor)
     }
 
     pub fn parse_factor(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
@@ -82,6 +61,7 @@ impl Expr {
         try_parse!(IfExpr::parse(cursor));
         try_parse!(WhileExpr::parse(cursor));
         try_parse!(Literal::parse(cursor));
+        try_parse!(TupleExpr::parse_or_group(cursor));
         try_parse!(Self::parse_id(cursor));
         try_parse!(Self::parse_unary(cursor));
         Err(NoneError.into())
@@ -93,8 +73,15 @@ impl Expr {
     }
 
     fn parse_unary(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
-        let operator = cursor.eat_type::<Operator>()?;
-        let expr = Self::parse(cursor)?;
-        Ok(Box::new(Expr::UnaryExpr { operator, expr }))
+        if cursor.peek()?
+            .downcast::<Operator>()
+            .is_some_and(|o| o.is_unary())
+        {
+            let operator = cursor.eat_type::<Operator>()?;
+            let expr = Self::parse(cursor)?;
+            Ok(Box::new(Expr::UnaryExpr { operator, expr }))
+        } else {
+            Err(NoneError.into())
+        }
     }
 }

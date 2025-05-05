@@ -1,6 +1,7 @@
-use object::{object::object::Object, types::{number::Integer, string::String_, tuple::Tuple}};
+use object::{object::object::Object, types::primitive::{number::Integer, string::String_}};
 use parser::signal_table::func::{expr::Expr, literal::Literal, stmt::Stmt};
 use lexer::token::operator::Operator;
+use object::types::compound::tuple::Tuple;
 
 pub trait Exec {
     fn exec(&self, env: &Object) -> Object;
@@ -9,13 +10,19 @@ pub trait Exec {
 impl Exec for Expr {
     fn exec(&self, env: &Object) -> Object {
         match self {
-            Expr::BinaryExpr {
-                left,
-                operator, right
-            } => {
-                let left = left.exec(env);
-                let right = right.exec(env);
-                match &**operator {
+            Expr::Call(expr) => {
+                let func = expr.func.exec(env);
+                let args = expr.args.exec(env);
+                func.call(args)
+            }
+            Expr::Dot(expr) => {
+                let left = expr.left.exec(env);
+                left.get_member(&*expr.right)
+            }
+            Expr::Binary(expr) => {
+                let left = expr.left.exec(env);
+                let right = expr.right.exec(env);
+                match &*expr.operator {
                     Operator::Plus => {
                         left.get_member("add").call(Tuple::new(vec![right]))
                     }
@@ -30,6 +37,13 @@ impl Exec for Expr {
             }
             Expr::Identifier(identifier) => {
                 env.get_member(identifier)
+            }
+            Expr::Tuple(exprs) => {
+                let mut args = Vec::new();
+                for expr in exprs.exprs.iter() {
+                    args.push(expr.exec(env));
+                }
+                Tuple::new(args)
             }
             _ => unimplemented!(),
         }

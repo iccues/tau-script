@@ -1,6 +1,9 @@
 use crate::object::{object::Object, object_trait::ObjectTrait};
 
-use super::{closure::Closure, func::Func, tuple::Tuple, undefined::Undefined};
+use crate::types::callable::{closure::Closure, func::Func};
+use crate::types::compound::tuple::Tuple;
+use crate::types::control::undefined::Undefined;
+use crate::types::error::error::Error;
 
 pub struct Variable {
     pub value: Object,
@@ -43,7 +46,7 @@ impl Variable {
                 a.get_data::<Variable>().unwrap().value = b.clone();
                 a.clone()
             }
-            _ => panic!("Invalid input"),
+            _ => Error::new("Invalid input"),
         }
     }
 }

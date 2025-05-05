@@ -1,6 +1,9 @@
 use crate::object::{object::Object, object_trait::ObjectTrait};
 
-use super::{closure::Closure, func::Func, string::String_, tuple::Tuple};
+use super::string::String_;
+use crate::types::callable::closure::Closure;
+use crate::types::compound::tuple::Tuple;
+use crate::types::error::error::Error;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Integer {
@@ -10,9 +13,9 @@ pub struct Integer {
 impl ObjectTrait for Integer {
     fn get_member_fn(this: Object, name: &str) -> Object {
         match name {
-            "add" => Integer::curry(this, Integer::add),
-            "to_string" => Integer::curry(this, Integer::to_string),
-            _ => panic!("get_member not implemented"),
+            "add" => Closure::new_first(Integer::add, this),
+            "to_string" => Closure::new_first(Integer::to_string, this),
+            _ => Error::new("get_member not implemented"),
         }
     }
 }
@@ -31,7 +34,7 @@ impl Integer {
                 let result = a.value + b.value;
                 Integer::new(result)
             }
-            _ => panic!("Invalid input"),
+            _ => Error::new("Invalid input"),
         }
     }
 
@@ -41,19 +44,8 @@ impl Integer {
                 let a = a.get_data_match::<Integer>().unwrap();
                 String_::new(a.value.to_string())
             }
-            _ => panic!("Invalid input"),
+            _ => Error::new("Invalid input"),
         }
-    }
-
-    fn curry<F>(this: Object, func: F) -> Object
-    where
-        F: Fn(Object) -> Object + 'static,
-    {
-        let this = this.get_data::<Integer>().unwrap();
-        Closure::new(
-            Func::new(func),
-            vec![Some(Self::from_data(this.clone()))],
-        )
     }
 }
 

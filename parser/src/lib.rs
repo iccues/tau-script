@@ -1,5 +1,4 @@
-use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufReader, Read};
 
 use lexer::stream::peekable::cursor::Cursor;
 use lexer::token::TokenBox;
@@ -16,8 +15,7 @@ use lexer::stream::token_stream::token_processor::TokenProcessor;
 pub mod signal_table;
 
 
-pub fn parser(input: &str) -> SignalTable {
-    let input = File::open(input).unwrap();
+pub fn parser(input: impl Read + 'static) -> SignalTable {
     let char_stream = CharStream::new(BufReader::new(input)).peeker();
     let lexer = Lexer::new(char_stream).peeker();
     let mut token_processor = TokenProcessor::new(lexer).peeker();
@@ -32,8 +30,7 @@ pub fn parse_stmt(cursor: &mut Cursor<'_, TokenBox>) -> error::Result<Stmt> {
 }
 
 #[allow(dead_code)]
-fn print_token(input: &str) {
-    let input = File::open(input).unwrap();
+pub fn print_token(input: impl Read + 'static) {
     let char_stream = CharStream::new(BufReader::new(input)).peeker();
     let lexer = Lexer::new(char_stream).peeker();
     let mut token_processor = TokenProcessor::new(lexer).peeker();
@@ -49,15 +46,20 @@ fn print_token(input: &str) {
 
 #[cfg(test)]
 mod tests {
+    use std::io::Cursor;
     use super::*;
 
     #[test]
-    fn test_parser() {
-        println!("{:?}", parser("../tests/hello.plang"));
-    }
+    fn test_stmt_parser() {
+        let input = Cursor::new("1 + (2 + 3);");
 
-    #[test]
-    fn test_print_token() {
-        print_token("../tests/hello.plang");
+        let char_stream = CharStream::new(BufReader::new(input)).peeker();
+        let lexer = Lexer::new(char_stream).peeker();
+        let mut token_processor = TokenProcessor::new(lexer).peeker();
+    
+        let mut cursor = token_processor.cursor();
+    
+        Stmt::parse(&mut cursor).unwrap();
+        // Stmt::parse(&mut cursor).unwrap();
     }
 }

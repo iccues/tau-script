@@ -1,5 +1,7 @@
 use std::ptr::drop_in_place;
 
+use crate::types::error::error::Error;
+
 use super::{obj_type::{ObjType, OBJ_TYPE_BOX}, object::Object};
 
 pub trait ObjectTrait: Sized {
@@ -16,11 +18,11 @@ pub trait ObjectTrait: Sized {
 
     fn get_member_fn(this: Object, name: &str) -> Object {
         let _ = (this, name);
-        panic!("get_member not implemented")
+        Error::new("get_member not implemented")
     }
     fn call_fn(this: Object, args: Object) -> Object {
         let _ = (this, args);
-        panic!("call not implemented")
+        Error::new("call not implemented")
     }
     fn match_fn(this: Object, other: Object) -> Option<Object> {
         let this_type = unsafe { this.get_data_uncheck::<ObjType>() };

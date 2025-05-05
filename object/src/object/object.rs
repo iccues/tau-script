@@ -77,7 +77,7 @@ impl Object {
 
 #[cfg(test)]
 mod tests {
-    use crate::types::number::Integer;
+    use crate::types::primitive::number::Integer;
 
     #[test]
     fn test_drop() {

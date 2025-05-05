@@ -1,9 +1,7 @@
-pub mod number;
-pub mod func;
-pub mod tuple;
-pub mod closure;
-pub mod bool;
-pub mod undefined;
+pub mod primitive;
+pub mod callable;
+pub mod control;
+pub mod compound;
+pub mod error;
 pub mod variable;
-pub mod string;
 pub mod env;

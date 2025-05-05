@@ -1,6 +1,7 @@
 use crate::object::{object::Object, object_trait::ObjectTrait};
 
-use super::number::Integer;
+use crate::types::error::error::Error;
+use crate::types::primitive::number::Integer;
 
 pub struct Tuple {
     pub elements: Vec<Object>,
@@ -10,7 +11,7 @@ impl ObjectTrait for Tuple {
     fn get_member_fn(this: Object, name: &str) -> Object {
         match name {
             "len" => Tuple::len(this),
-            _ => panic!("get_member not implemented"),
+            _ => Error::new("get_member not implemented"),
             
         }
     }
@@ -34,8 +35,8 @@ impl Tuple {
 #[cfg(test)]
 mod tests {
 
-    use crate::types::number::Integer;
-    use crate::types::tuple::Tuple;
+    use crate::types::primitive::number::Integer;
+    use crate::types::compound::tuple::Tuple;
 
     #[test]
     fn test_tuple() {
