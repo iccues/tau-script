@@ -2,12 +2,12 @@ use error::Result;
 use lexer::stream::peekable::cursor::Cursor;
 use lexer::token::{operator::Operator, TokenBox};
 
-use super::expr::Expr;
+use crate::expr::expr::Expr;
 
 #[derive(Debug)]
 pub struct Block {
-    statments: Vec<Box<Expr>>,
-    end_value: Option<Box<Expr>>,
+    pub statments: Vec<Box<Expr>>,
+    pub end_value: Option<Box<Expr>>,
 }
 
 impl Block {

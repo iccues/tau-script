@@ -2,12 +2,12 @@ use error::Result;
 use lexer::stream::peekable::cursor::Cursor;
 use lexer::token::{operator::Operator, keyword::Keyword, TokenBox};
 
-use super::expr::Expr;
+use crate::expr::expr::Expr;
 
 #[derive(Debug)]
 pub struct WhileExpr {
-    condition: Box<Expr>,
-    then_block: Box<Expr>,
+    pub condition: Box<Expr>,
+    pub then_block: Box<Expr>,
 }
 
 impl WhileExpr {

@@ -39,7 +39,7 @@ impl Keyword {
                 "def" => Some(ComplexBox::Ref(&DEF_KEYWORD)),
                 "type" => Some(ComplexBox::Ref(&TYPE_KEYWORD)),
                 "var" => Some(ComplexBox::Ref(&VAR_KEYWORD)),
-                "func" => Some(ComplexBox::Ref(&FUNC_KEYWORD)),
+                "expr" => Some(ComplexBox::Ref(&FUNC_KEYWORD)),
                 "if" => Some(ComplexBox::Ref(&IF_KEYWORD)),
                 "else" => Some(ComplexBox::Ref(&ELSE_KEYWORD)),
                 "while" => Some(ComplexBox::Ref(&WHILE_KEYWORD)),

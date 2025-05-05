@@ -1,17 +1,21 @@
-use crate::signal_table::func::{block::Block, if_expr::IfExpr, literal::Literal};
-
-use error::{NoneError, Result};
-use lexer::{
-    stream::peekable::cursor::Cursor,
-    token::{identifier::Identifier, operator::Operator, ComplexBox, TokenBox}
-};
-use super::{binary_expr::BinaryExpr, call_expr::CallExpr, dot_expr::DotExpr, tuple::TupleExpr, while_expr::WhileExpr};
-use error::try_parse;
+use error::{try_parse, NoneError};
+use lexer::stream::peekable::cursor::Cursor;
+use lexer::token::{ComplexBox, TokenBox};
+use lexer::token::identifier::Identifier;
+use lexer::token::operator::Operator;
+use crate::expr::binary_expr::BinaryExpr;
+use crate::expr::factor::block::Block;
+use crate::expr::factor::if_expr::IfExpr;
+use crate::expr::factor::literal::Literal;
+use crate::expr::factor::tuple::TupleExpr;
+use crate::expr::factor::while_expr::WhileExpr;
+use crate::expr::postfix::call_expr::CallExpr;
+use crate::expr::postfix::dot_expr::DotExpr;
 
 #[derive(Debug)]
 pub enum Expr {
 
-    /// Postfixe expression
+    /// Postfix expression
     Call(CallExpr),
     Dot(DotExpr),
 
@@ -33,11 +37,11 @@ pub enum Expr {
 }
 
 impl Expr {
-    pub fn parse(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
+    pub fn parse(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
         Self::parse_postfix(cursor)
     }
 
-    fn parse_postfix(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
+    fn parse_postfix(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
         let mut first = Self::parse_binary(cursor)?;
         let mut changed = true;
         let mut t;
@@ -50,11 +54,11 @@ impl Expr {
         Ok(first)
     }
 
-    fn parse_binary(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
+    fn parse_binary(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
         BinaryExpr::parse(cursor)
     }
 
-    pub fn parse_factor(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
+    pub fn parse_factor(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
         try_parse!(Block::parse(cursor));
         try_parse!(IfExpr::parse(cursor));
         try_parse!(WhileExpr::parse(cursor));
@@ -65,12 +69,12 @@ impl Expr {
         Err(NoneError.into())
     }
 
-    fn parse_id(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
+    fn parse_id(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
         let id = cursor.eat_type::<Identifier>()?;
         Ok(Box::new(Expr::Identifier(id.name())))
     }
 
-    fn parse_unary(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
+    fn parse_unary(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
         if cursor.peek()?
             .downcast::<Operator>()
             .is_some_and(|o| o.is_unary())

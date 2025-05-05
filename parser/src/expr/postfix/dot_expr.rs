@@ -1,6 +1,6 @@
 use lexer::{stream::peekable::cursor::Cursor, token::{identifier::Identifier, operator::Operator, TokenBox}};
 
-use super::expr::Expr;
+use crate::expr::expr::Expr;
 use error::Result;
 
 #[derive(Debug)]

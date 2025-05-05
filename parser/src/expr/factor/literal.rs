@@ -8,7 +8,7 @@ use lexer::{
 };
 use error::{NoneError, Result};
 
-use super::expr::Expr;
+use crate::expr::expr::Expr;
 
 #[derive(Debug)]
 pub enum Literal {

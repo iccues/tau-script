@@ -2,13 +2,13 @@ use error::Result;
 use lexer::stream::peekable::cursor::Cursor;
 use lexer::token::{operator::Operator, keyword::Keyword, TokenBox};
 
-use super::expr::Expr;
+use crate::expr::expr::Expr;
 
 #[derive(Debug)]
 pub struct IfExpr {
-    condition: Box<Expr>,
-    then_block: Box<Expr>,
-    else_block: Option<Box<Expr>>,
+    pub condition: Box<Expr>,
+    pub then_block: Box<Expr>,
+    pub else_block: Option<Box<Expr>>,
 }
 
 impl IfExpr {

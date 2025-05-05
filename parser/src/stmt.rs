@@ -1,7 +1,7 @@
 use lexer::{stream::peekable::cursor::Cursor, token::{operator::Operator, TokenBox}};
 use error::Result;
 
-use super::expr::Expr;
+use crate::expr::expr::Expr;
 
 #[derive(Debug)]
 pub enum Stmt {

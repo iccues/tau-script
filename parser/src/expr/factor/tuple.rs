@@ -1,7 +1,7 @@
 use error::Result;
 use lexer::{stream::peekable::cursor::Cursor, token::{operator::Operator, TokenBox}};
 
-use super::expr::Expr;
+use crate::expr::expr::Expr;
 
 #[derive(Debug)]
 pub struct TupleExpr {
@@ -19,7 +19,7 @@ impl TupleExpr {
                 break;
             }
         }
-        Ok(Box::new(Expr::Tuple(Self { exprs })))
+        Ok(Box::new(Expr::Tuple(TupleExpr { exprs })))
     }
 
     pub fn parse_or_group(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
@@ -38,6 +38,6 @@ impl TupleExpr {
                 break;
             }
         }
-        Ok(Box::new(Expr::Tuple(Self { exprs })))
+        Ok(Box::new(Expr::Tuple(TupleExpr { exprs })))
     }
 }

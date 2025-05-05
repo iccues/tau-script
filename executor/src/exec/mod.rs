@@ -1,7 +1,9 @@
 use object::{object::object::Object, types::primitive::{number::Integer, string::String_}};
-use parser::signal_table::func::{expr::Expr, literal::Literal, stmt::Stmt};
+use parser::stmt::Stmt;
 use lexer::token::operator::Operator;
 use object::types::compound::tuple::Tuple;
+use parser::expr::expr::Expr;
+use parser::expr::factor::literal::Literal;
 
 pub trait Exec {
     fn exec(&self, env: &Object) -> Object;

@@ -1,7 +1,8 @@
 use lexer::{stream::peekable::cursor::Cursor, token::{operator::Operator, TokenBox}};
 
-use super::{expr::Expr, tuple::TupleExpr};
+use crate::expr::expr::Expr;
 use error::Result;
+use crate::expr::factor::tuple::TupleExpr;
 
 #[derive(Debug)]
 pub struct CallExpr {
