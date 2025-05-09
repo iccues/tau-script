@@ -1,4 +1,7 @@
-use crate::stream::peekable::cursor::Cursor;
+use error::NoneError;
+use error::Result;
+
+use crate::stream::peeker::Peeker;
 
 use super::identifier::Identifier;
 use super::Token;
@@ -31,28 +34,23 @@ const WHILE_KEYWORD: Keyword = Keyword::While;
 const SELF_KEYWORD: Keyword = Keyword::Self_;
 
 impl Keyword {
-    pub fn parse(cursor: &mut Cursor<TokenBox>) -> Option<TokenBox> {
-        if let Ok(identifier) = cursor.eat_type::<Identifier>() {
-            match &identifier.name()[..] {
-                "let" => Some(ComplexBox::Ref(&LET_KEYWORD)),
-                "mod" => Some(ComplexBox::Ref(&MOD_KEYWORD)),
-                "def" => Some(ComplexBox::Ref(&DEF_KEYWORD)),
-                "type" => Some(ComplexBox::Ref(&TYPE_KEYWORD)),
-                "var" => Some(ComplexBox::Ref(&VAR_KEYWORD)),
-                "expr" => Some(ComplexBox::Ref(&FUNC_KEYWORD)),
-                "if" => Some(ComplexBox::Ref(&IF_KEYWORD)),
-                "else" => Some(ComplexBox::Ref(&ELSE_KEYWORD)),
-                "while" => Some(ComplexBox::Ref(&WHILE_KEYWORD)),
-                "self" => Some(ComplexBox::Ref(&SELF_KEYWORD)),
-                _ => {
-                    cursor.reset();
-                    None
-                },
-            }
-        }
-        else {
-            None
-        }
+    pub fn parse(cursor: &mut Peeker<TokenBox>) -> Result<TokenBox> {
+        let identifier = cursor.peek()?.downcast::<Identifier>()?;
+        let ret: Result<TokenBox> = match &identifier.name()[..] {
+            "let" => Ok(ComplexBox::Ref(&LET_KEYWORD)),
+            "mod" => Ok(ComplexBox::Ref(&MOD_KEYWORD)),
+            "def" => Ok(ComplexBox::Ref(&DEF_KEYWORD)),
+            "type" => Ok(ComplexBox::Ref(&TYPE_KEYWORD)),
+            "var" => Ok(ComplexBox::Ref(&VAR_KEYWORD)),
+            "expr" => Ok(ComplexBox::Ref(&FUNC_KEYWORD)),
+            "if" => Ok(ComplexBox::Ref(&IF_KEYWORD)),
+            "else" => Ok(ComplexBox::Ref(&ELSE_KEYWORD)),
+            "while" => Ok(ComplexBox::Ref(&WHILE_KEYWORD)),
+            "self" => Ok(ComplexBox::Ref(&SELF_KEYWORD)),
+            _ => return Err(NoneError.into()),
+        };
+        cursor.next()?;
+        ret
     }
 }
 

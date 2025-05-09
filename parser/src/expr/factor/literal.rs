@@ -1,5 +1,5 @@
 use lexer::{
-    stream::peekable::cursor::Cursor,
+    stream::peeker::Peeker,
     token::{
         number::{Float, Integer},
         string::StringToken,
@@ -19,14 +19,14 @@ pub enum Literal {
 }
 
 impl Literal {
-    pub fn parse(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
-        if let Ok(integer) = cursor.eat_type::<Integer>() {
+    pub fn parse(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
+        if let Ok(integer) = peeker.eat_type::<Integer>() {
             return Ok(Box::new(Expr::Literal(Literal::Integer(integer.number()))));
         }
-        if let Ok(float) = cursor.eat_type::<Float>() {
+        if let Ok(float) = peeker.eat_type::<Float>() {
             return Ok(Box::new(Expr::Literal(Literal::Float(float.number()))));
         }
-        if let Ok(string) = cursor.eat_type::<StringToken>() {
+        if let Ok(string) = peeker.eat_type::<StringToken>() {
             return Ok(Box::new(Expr::Literal(Literal::String(string.string()))));
         }
         Err(NoneError.into())

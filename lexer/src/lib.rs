@@ -3,7 +3,7 @@ use std::io::{BufReader, Read};
 use stream::{
     Stream,
     char_stream::CharStream,
-    peekable::peeker::Peeker,
+    peeker::Peeker,
     token_stream::{lexer::Lexer, token_processor::TokenProcessor},
 };
 use token::TokenBox;

@@ -1,7 +1,6 @@
-use error::Result;
+use error::{try_parse, Result};
 
-use crate::stream::peekable::Peekable;
-use crate::stream::{peekable::peeker::Peeker, Stream};
+use crate::stream::{peeker::Peeker, Stream};
 use crate::token::operator::Operator;
 use crate::token::TokenBox;
 use crate::token::keyword::Keyword;
@@ -31,17 +30,9 @@ impl TokenProcessor {
     }
 
     pub fn next_token(&mut self) -> Result<TokenBox> {
-        let cursor = &mut self.input.cursor();
 
-        if let Some(t) = Keyword::parse(cursor) {
-            cursor.sync();
-            return Ok(t);
-        }
-
-        if let Some(t) = Operator::complex_parse(cursor) {
-            cursor.sync();
-            return Ok(t);
-        }
+        try_parse!(Keyword::parse(&mut self.input));
+        try_parse!(Operator::complex_parse(&mut self.input));
 
         self.input.next()
     }

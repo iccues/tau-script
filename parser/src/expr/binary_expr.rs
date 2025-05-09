@@ -1,4 +1,4 @@
-use lexer::{stream::peekable::cursor::Cursor, token::{operator::Operator, ComplexBox, TokenBox}};
+use lexer::{stream::peeker::Peeker, token::{operator::Operator, ComplexBox, TokenBox}};
 
 use crate::expr::expr::Expr;
 use error::Result;
@@ -11,19 +11,19 @@ pub struct BinaryExpr {
 }
 
 impl BinaryExpr {
-    pub fn parse(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
+    pub fn parse(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
         let mut factors = Vec::new();
         let mut operators: Vec<ComplexBox<Operator>> = Vec::new();
 
-        factors.push(Expr::parse_postfix(cursor)?);
+        factors.push(Expr::parse_postfix(peeker)?);
 
-        while cursor
+        while peeker
             .peek()?
             .downcast::<Operator>()
-            .is_some_and(|o| o.priority() >= 0)
+            .is_ok_and(|o| o.priority() >= 0)
         {
 
-            let operator = cursor.eat_type::<Operator>()?;
+            let operator = peeker.eat_type::<Operator>()?;
 
             while !operators.is_empty()
                 && operator.priority() <= operators.last().unwrap().priority()
@@ -39,7 +39,7 @@ impl BinaryExpr {
             }
 
             operators.push(operator);
-            factors.push(Expr::parse_postfix(cursor)?);
+            factors.push(Expr::parse_postfix(peeker)?);
         }
 
         while !operators.is_empty() {

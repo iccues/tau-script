@@ -1,18 +1,17 @@
-use lexer::stream::peekable::cursor::Cursor;
+use lexer::stream::peeker::Peeker;
 use lexer::token::TokenBox;
 use stmt::Stmt;
 
 pub mod expr;
 pub mod stmt;
 
-pub fn parse_stmt(cursor: &mut Cursor<'_, TokenBox>) -> error::Result<Stmt> {
-    Stmt::parse(cursor)
+pub fn parse_stmt(peeker: &mut Peeker<TokenBox>) -> error::Result<Stmt> {
+    Stmt::parse(peeker)
 }
 
 #[cfg(test)]
 mod tests {
     use std::io::Cursor;
-    use lexer::stream::peekable::Peekable;
 
     use super::*;
 
@@ -20,9 +19,7 @@ mod tests {
     fn test_stmt_parser() {
         let input = Cursor::new("1 + (2 + 3);");
         let mut lexer = lexer::get_lexer(input);
-        let mut cursor = lexer.cursor();
     
-        Stmt::parse(&mut cursor).unwrap();
-        // Stmt::parse(&mut cursor).unwrap();
+        Stmt::parse(&mut lexer).unwrap();
     }
 }

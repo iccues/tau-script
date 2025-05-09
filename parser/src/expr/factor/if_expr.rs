@@ -1,5 +1,5 @@
 use error::Result;
-use lexer::stream::peekable::cursor::Cursor;
+use lexer::stream::peeker::Peeker;
 use lexer::token::{operator::Operator, keyword::Keyword, TokenBox};
 
 use crate::expr::expr::Expr;
@@ -12,14 +12,14 @@ pub struct IfExpr {
 }
 
 impl IfExpr {
-    pub fn parse(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
-        cursor.eat_eq(&Keyword::If)?;
-        cursor.eat_eq(&Operator::OpenParen)?;
-        let condition = Expr::parse(cursor)?;
-        cursor.eat_eq(&Operator::CloseParen)?;
-        let then_block = Expr::parse(cursor)?;
-        let else_block = if cursor.eat_eq(&Keyword::Else).is_ok() {
-            Some(Expr::parse(cursor)?)
+    pub fn parse(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
+        peeker.eat_eq(&Keyword::If)?;
+        peeker.eat_eq(&Operator::OpenParen)?;
+        let condition = Expr::parse(peeker)?;
+        peeker.eat_eq(&Operator::CloseParen)?;
+        let then_block = Expr::parse(peeker)?;
+        let else_block = if peeker.eat_eq(&Keyword::Else).is_ok() {
+            Some(Expr::parse(peeker)?)
         } else {
             None
         };

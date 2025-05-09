@@ -1,5 +1,5 @@
 use error::{try_parse, NoneError};
-use lexer::stream::peekable::cursor::Cursor;
+use lexer::stream::peeker::Peeker;
 use lexer::token::{ComplexBox, TokenBox};
 use lexer::token::identifier::Identifier;
 use lexer::token::operator::Operator;
@@ -37,50 +37,50 @@ pub enum Expr {
 }
 
 impl Expr {
-    pub fn parse(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
-        Self::parse_binary(cursor)
+    pub fn parse(peeker: &mut Peeker<TokenBox>) -> error::Result<Box<Expr>> {
+        Self::parse_binary(peeker)
     }
 
-    fn parse_binary(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
-        BinaryExpr::parse(cursor)
+    fn parse_binary(peeker: &mut Peeker<TokenBox>) -> error::Result<Box<Expr>> {
+        BinaryExpr::parse(peeker)
     }
 
-    pub fn parse_postfix(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
-        let mut first = Self::parse_factor(cursor)?;
+    pub fn parse_postfix(peeker: &mut Peeker<TokenBox>) -> error::Result<Box<Expr>> {
+        let mut first = Self::parse_factor(peeker)?;
         let mut changed = true;
         let mut t;
         while changed {
-            (t, first) = CallExpr::try_parse(first, cursor)?;
+            (t, first) = CallExpr::try_parse(first, peeker)?;
             changed = t;
-            (t, first) = DotExpr::try_parse(first, cursor)?;
+            (t, first) = DotExpr::try_parse(first, peeker)?;
             changed = changed || t;
         }
         Ok(first)
     }
 
-    pub fn parse_factor(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
-        try_parse!(Block::parse(cursor));
-        try_parse!(IfExpr::parse(cursor));
-        try_parse!(WhileExpr::parse(cursor));
-        try_parse!(Literal::parse(cursor));
-        try_parse!(TupleExpr::parse_or_group(cursor));
-        try_parse!(Self::parse_id(cursor));
-        try_parse!(Self::parse_unary(cursor));
+    pub fn parse_factor(peeker: &mut Peeker<TokenBox>) -> error::Result<Box<Expr>> {
+        try_parse!(Block::parse(peeker));
+        try_parse!(IfExpr::parse(peeker));
+        try_parse!(WhileExpr::parse(peeker));
+        try_parse!(Literal::parse(peeker));
+        try_parse!(TupleExpr::parse_or_group(peeker));
+        try_parse!(Self::parse_id(peeker));
+        try_parse!(Self::parse_unary(peeker));
         Err(NoneError.into())
     }
 
-    fn parse_id(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
-        let id = cursor.eat_type::<Identifier>()?;
+    fn parse_id(peeker: &mut Peeker<TokenBox>) -> error::Result<Box<Expr>> {
+        let id = peeker.eat_type::<Identifier>()?;
         Ok(Box::new(Expr::Identifier(id.name())))
     }
 
-    fn parse_unary(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
-        if cursor.peek()?
+    fn parse_unary(peeker: &mut Peeker<TokenBox>) -> error::Result<Box<Expr>> {
+        if peeker.peek()?
             .downcast::<Operator>()
-            .is_some_and(|o| o.is_unary())
+            .is_ok_and(|o| o.is_unary())
         {
-            let operator = cursor.eat_type::<Operator>()?;
-            let expr = Self::parse(cursor)?;
+            let operator = peeker.eat_type::<Operator>()?;
+            let expr = Self::parse(peeker)?;
             Ok(Box::new(Expr::UnaryExpr { operator, expr }))
         } else {
             Err(NoneError.into())

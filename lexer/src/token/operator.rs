@@ -1,4 +1,7 @@
-use crate::stream::peekable::cursor::Cursor;
+use error::NoneError;
+use error::Result;
+
+use crate::stream::peeker::Peeker;
 
 use super::Token;
 use super::ComplexBox;
@@ -132,17 +135,21 @@ impl Operator {
         }
     }
 
-    pub fn complex_parse(cursor: &mut Cursor<TokenBox>) -> Option<TokenBox> {
-        if cursor.eat_eq(&Operator::Colon).is_ok() {
-            if cursor.last_position() == cursor.next_position(){
-                if cursor.eat_eq(&Operator::Colon).is_ok() {
-                    cursor.sync();
-                    return Some(ComplexBox::Ref(&DOUBLE_COLON_SINGLETON));
-                }    
+    pub fn complex_parse(peeker: &mut Peeker<TokenBox>) -> Result<TokenBox> {
+        if let [a, b] = &peeker.peeks(2)?[..] {
+            let a = &*a.downcast::<Operator>()?;
+            let b = &*b.downcast::<Operator>()?;
+            match (a, b) {
+                (Operator::Colon, Operator::Colon) => {
+                    peeker.next()?;
+                    peeker.next()?;
+                    return Ok(ComplexBox::Ref(&DOUBLE_COLON_SINGLETON));
+                }
+                _ => {}
             }
-        }
-        cursor.reset();
-        None
+        };
+
+        Err(NoneError.into())
     }
 
     pub fn priority(&self) -> isize {

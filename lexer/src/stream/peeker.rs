@@ -1,10 +1,8 @@
 use std::collections::VecDeque;
 
-use error::Result;
+use error::{NoneError, Result};
 
-use crate::stream::{Position, Stream};
-
-use super::Peekable;
+use crate::{stream::{Position, Stream}, token::{ComplexBox, Token, TokenBox}};
 
 pub struct Peeker<I: Clone> {
     inner: Box<dyn Stream<Item = I>>,
@@ -31,28 +29,6 @@ impl<I: Clone> Stream for Peeker<I> {
         } else {
             self.buffer[0].1
         }
-    }
-}
-
-impl<I: Clone> Peekable for Peeker<I> {
-    fn peek(&mut self) -> Result<Self::Item> {
-        self.peek()
-    }
-
-    fn peek_n(&mut self, n: usize) -> Result<Self::Item> {
-        self.peek_n(n)
-    }
-
-    fn peeks<'a>(&'a mut self, n: usize) -> Result<Vec<Self::Item>> {
-        for _ in self.buffer.len()..n {
-            self.get_next();
-        }
-
-        self.buffer
-            .iter()
-            .take(n)
-            .map(|x| x.2.clone())
-            .collect::<Result<Vec<I>>>()
     }
 }
 
@@ -85,6 +61,18 @@ impl<I: Clone> Peeker<I> {
         self.buffer[n].2.clone()
     }
 
+    pub fn peeks<'a>(&'a mut self, n: usize) -> Result<Vec<I>> {
+        for _ in self.buffer.len()..n {
+            self.get_next();
+        }
+
+        self.buffer
+            .iter()
+            .take(n)
+            .map(|x| x.2.clone())
+            .collect::<Result<Vec<I>>>()
+    }
+
     pub fn next(&mut self) -> Result<I> {
         if self.buffer.is_empty() {
             self.get_next();
@@ -94,11 +82,40 @@ impl<I: Clone> Peeker<I> {
 }
 
 impl Peeker<char> {
-    pub fn peeks(&mut self, n: usize) -> Result<String> {
-        for _ in self.buffer.len()..n {
-            self.get_next();
+    pub fn peek_str(&mut self, n: usize) -> Result<String> {
+        Ok(self.peeks(n)?.into_iter().collect())
+    }
+
+    pub fn eat_str(&mut self, s: &str) -> Result<()> {
+        if self.peek_str(s.len())? == s {
+            self.nexts(s.len())?;
+            Ok(())
+        } else {
+            Err(NoneError.into())
         }
-        let a: Vec<Result<char>> = self.buffer.iter().take(n).map(|x| x.2.clone()).collect();
-        a.into_iter().collect()
+    }
+
+    pub fn eat_whitespace(&mut self) -> Result<()> {
+        while self.peek()?.is_whitespace() {
+            self.next()?;
+        }
+        Ok(())
+    }
+}
+
+impl Peeker<TokenBox> {
+    pub fn eat_type<T: Token>(&mut self) -> Result<ComplexBox<T>> {
+        let item = self.peek()?.downcast()?;
+        let _ = self.next();
+        Ok(item)
+    }
+
+    pub fn eat_eq(&mut self, value: &dyn Token) -> Result<()> {
+        if self.peek()?.eq(value) {
+            let _ = self.next();
+            Ok(())
+        } else {
+            Err(NoneError.into())
+        }
     }
 }

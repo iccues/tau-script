@@ -1,5 +1,5 @@
 use error::Result;
-use lexer::{stream::peekable::cursor::Cursor, token::{operator::Operator, TokenBox}};
+use lexer::{stream::peeker::Peeker, token::{operator::Operator, TokenBox}};
 
 use crate::expr::expr::Expr;
 
@@ -9,32 +9,32 @@ pub struct TupleExpr {
 }
 
 impl TupleExpr {
-    pub fn parse(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
+    pub fn parse(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
         let mut exprs = Vec::new();
-        cursor.eat_eq(&Operator::OpenParen)?;
-        while cursor.eat_eq(&Operator::CloseParen).is_err() {
-            exprs.push(Expr::parse(cursor)?);
-            if cursor.eat_eq(&Operator::Comma).is_err() {
-                cursor.eat_eq(&Operator::CloseParen)?;
+        peeker.eat_eq(&Operator::OpenParen)?;
+        while peeker.eat_eq(&Operator::CloseParen).is_err() {
+            exprs.push(Expr::parse(peeker)?);
+            if peeker.eat_eq(&Operator::Comma).is_err() {
+                peeker.eat_eq(&Operator::CloseParen)?;
                 break;
             }
         }
         Ok(Box::new(Expr::Tuple(TupleExpr { exprs })))
     }
 
-    pub fn parse_or_group(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
+    pub fn parse_or_group(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
         let mut exprs = Vec::new();
-        cursor.eat_eq(&Operator::OpenParen)?;
-        exprs.push(Expr::parse(cursor)?);
-        if cursor.eat_eq(&Operator::CloseParen).is_ok() {
+        peeker.eat_eq(&Operator::OpenParen)?;
+        exprs.push(Expr::parse(peeker)?);
+        if peeker.eat_eq(&Operator::CloseParen).is_ok() {
             return Ok(exprs.pop().unwrap());
         }
 
-        cursor.eat_eq(&Operator::Comma)?;
-        while cursor.eat_eq(&Operator::CloseParen).is_err() {
-            exprs.push(Expr::parse(cursor)?);
-            if cursor.eat_eq(&Operator::Comma).is_err() {
-                cursor.eat_eq(&Operator::CloseParen)?;
+        peeker.eat_eq(&Operator::Comma)?;
+        while peeker.eat_eq(&Operator::CloseParen).is_err() {
+            exprs.push(Expr::parse(peeker)?);
+            if peeker.eat_eq(&Operator::Comma).is_err() {
+                peeker.eat_eq(&Operator::CloseParen)?;
                 break;
             }
         }

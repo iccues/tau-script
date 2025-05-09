@@ -1,9 +1,9 @@
 use error::Result;
-use peekable::peeker::Peeker;
+use peeker::Peeker;
 
 pub mod char_stream;
 pub mod token_stream;
-pub mod peekable;
+pub mod peeker;
 
 pub trait Stream {
     type Item: Clone;

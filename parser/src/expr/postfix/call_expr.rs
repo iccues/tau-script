@@ -1,4 +1,4 @@
-use lexer::{stream::peekable::cursor::Cursor, token::{operator::Operator, TokenBox}};
+use lexer::{stream::peeker::Peeker, token::{operator::Operator, TokenBox}};
 
 use crate::expr::expr::Expr;
 use error::Result;
@@ -11,9 +11,9 @@ pub struct CallExpr {
 }
 
 impl CallExpr {
-    pub fn try_parse(func: Box<Expr>, cursor: &mut Cursor<TokenBox>) -> Result<(bool, Box<Expr>)> {
-        if cursor.peek()?.eq(&Operator::OpenParen) {
-            let args = TupleExpr::parse(cursor)?;
+    pub fn try_parse(func: Box<Expr>, peeker: &mut Peeker<TokenBox>) -> Result<(bool, Box<Expr>)> {
+        if peeker.peek()?.eq(&Operator::OpenParen) {
+            let args = TupleExpr::parse(peeker)?;
             Ok((true, Box::new(Expr::Call(CallExpr { func, args }))))
         } else {
             Ok((false, func))

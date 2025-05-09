@@ -1,5 +1,5 @@
 use error::Result;
-use lexer::stream::peekable::cursor::Cursor;
+use lexer::stream::peeker::Peeker;
 use lexer::token::{operator::Operator, keyword::Keyword, TokenBox};
 
 use crate::expr::expr::Expr;
@@ -11,12 +11,12 @@ pub struct WhileExpr {
 }
 
 impl WhileExpr {
-    pub fn parse(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
-        cursor.eat_eq(&Keyword::While)?;
-        cursor.eat_eq(&Operator::OpenParen)?;
-        let condition = Expr::parse(cursor)?;
-        cursor.eat_eq(&Operator::CloseParen)?;
-        let then_block = Expr::parse(cursor)?;
+    pub fn parse(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
+        peeker.eat_eq(&Keyword::While)?;
+        peeker.eat_eq(&Operator::OpenParen)?;
+        let condition = Expr::parse(peeker)?;
+        peeker.eat_eq(&Operator::CloseParen)?;
+        let then_block = Expr::parse(peeker)?;
         Ok(Box::new(Expr::While(WhileExpr { condition, then_block })))
     }
 }

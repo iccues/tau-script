@@ -1,5 +1,5 @@
 use error::Result;
-use lexer::stream::peekable::cursor::Cursor;
+use lexer::stream::peeker::Peeker;
 use lexer::token::{operator::Operator, TokenBox};
 
 use crate::expr::expr::Expr;
@@ -11,24 +11,22 @@ pub struct Block {
 }
 
 impl Block {
-    pub fn parse(cursor: &mut Cursor<TokenBox>) -> Result<Box<Expr>> {
-        cursor.eat_eq(&Operator::OpenBrace)?;
+    pub fn parse(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
+        peeker.eat_eq(&Operator::OpenBrace)?;
 
         let mut statments = Vec::new();
         let mut end_value = None;
 
-        while cursor.eat_eq(&Operator::CloseBrace).is_err() {
-            let statment = Expr::parse(cursor)?;
-            if cursor.eat_eq(&Operator::Semi).is_err() {
+        while peeker.eat_eq(&Operator::CloseBrace).is_err() {
+            let statment = Expr::parse(peeker)?;
+            if peeker.eat_eq(&Operator::Semi).is_err() {
                 end_value = Some(statment);
-                cursor.eat_eq(&Operator::CloseBrace)?;
+                peeker.eat_eq(&Operator::CloseBrace)?;
                 break;
             }
             statments.push(statment);
-            cursor.sync();
         }
 
-        cursor.sync();
         Ok(Box::new(Expr::Block(Block {
             statments,
             end_value,

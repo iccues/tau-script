@@ -1,5 +1,7 @@
 use std::{any::Any, fmt::Debug, ops::Deref, rc::Rc};
 
+use error::{NoneError, Result};
+
 pub mod number;
 pub mod operator;
 pub mod identifier;
@@ -50,7 +52,7 @@ pub enum ComplexBox<T: 'static + ?Sized> {
 }
 
 impl<T: AsAny + ?Sized> ComplexBox<T> {
-    pub fn downcast<U>(&self) -> Option<ComplexBox<U>> {
+    pub fn downcast<U>(&self) -> Result<ComplexBox<U>> {
         match self {
             ComplexBox::Rc(r) => {
                 r.clone().into_any()
@@ -63,7 +65,7 @@ impl<T: AsAny + ?Sized> ComplexBox<T> {
                     .downcast_ref::<U>()
                     .map(|r| ComplexBox::Ref(r))
             }
-        }
+        }.ok_or(NoneError.into())
     }
 
     pub fn is<U: 'static>(&self) -> bool {

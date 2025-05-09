@@ -1,7 +1,7 @@
 use error::{ErrKind, NoneError, Result};
 
 use crate::stream::char_stream::EOF_CHAR;
-use crate::stream::{peekable::peeker::Peeker, Stream};
+use crate::stream::{peeker::Peeker, Stream};
 use crate::token::comment::Comment;
 use crate::token::identifier::Identifier;
 use crate::token::number::{Float, Integer};
@@ -62,7 +62,7 @@ impl Lexer {
     }
 
     fn parse_comment(&mut self) -> Result<TokenBox> {
-        match &self.char_peeker.peeks(2)?[..] {
+        match &self.char_peeker.peek_str(2)?[..] {
             "//" => {
                 let mut text = String::new();
 
@@ -75,7 +75,7 @@ impl Lexer {
                     c = self.char_peeker.peek()?;
                 }
                 Ok(Comment::new(Some(text)))
-    
+
             }
             "/*" => {
                 let mut text = String::new();
@@ -83,10 +83,10 @@ impl Lexer {
                 self.char_peeker.next()?;
                 self.char_peeker.next()?;
     
-                let mut s = self.char_peeker.peeks(2)?;
+                let mut s = self.char_peeker.peek_str(2)?;
                 while s != "*/" {
                     text.push(self.char_peeker.next()?);
-                    s = self.char_peeker.peeks(2)?;
+                    s = self.char_peeker.peek_str(2)?;
                 }
     
                 self.char_peeker.next()?;

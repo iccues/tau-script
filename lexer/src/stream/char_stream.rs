@@ -1,7 +1,5 @@
 use std::io::{BufRead, Lines};
-use error::NoneError;
 use error::Result;
-use super::peekable::Peek;
 
 use super::{Position, Stream};
 
@@ -52,28 +50,5 @@ impl Stream for CharStream {
     }
     fn next_position(&self) -> Position {
         self.position
-    }
-}
-
-
-impl Peek<char> {
-    pub fn peek_str(&mut self, n: usize) -> Result<String> {
-        Ok(self.peeks(n)?.into_iter().collect())
-    }
-
-    pub fn eat_str(&mut self, s: &str) -> Result<()> {
-        if self.peek_str(s.len())? == s {
-            self.nexts(s.len())?;
-            Ok(())
-        } else {
-            Err(NoneError.into())
-        }
-    }
-
-    pub fn eat_whitespace(&mut self) -> Result<()> {
-        while self.peek()?.is_whitespace() {
-            self.next()?;
-        }
-        Ok(())
     }
 }
