@@ -1,8 +1,8 @@
-use error::{try_parse, Result};
+use error::Result;
 
 use crate::stream::{peeker::Peeker, Stream};
-use crate::token::TokenBox;
-use crate::token::keyword::Keyword;
+use token::TokenBox;
+use token::keyword::Keyword;
 
 pub struct TokenProcessor {
     input: Peeker<TokenBox>,
@@ -30,7 +30,10 @@ impl TokenProcessor {
 
     pub fn next_token(&mut self) -> Result<TokenBox> {
 
-        try_parse!(Keyword::parse(&mut self.input));
+        if let Ok(token) = Keyword::parse(self.input.peek()?) {
+            self.input.next()?;
+            return Ok(token);
+        }
 
         self.input.next()
     }

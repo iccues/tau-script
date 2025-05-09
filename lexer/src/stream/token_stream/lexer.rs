@@ -2,13 +2,13 @@ use error::{ErrKind, NoneError, Result};
 
 use crate::stream::char_stream::EOF_CHAR;
 use crate::stream::{peeker::Peeker, Stream};
-use crate::token::comment::Comment;
-use crate::token::identifier::Identifier;
-use crate::token::number::{Float, Integer};
-use crate::token::operator::Operator;
-use crate::token::singleton_token::EofToken;
-use crate::token::string::StringToken;
-use crate::token::TokenBox;
+use token::comment::Comment;
+use token::identifier::Identifier;
+use token::number::{Float, Integer};
+use token::operator::Operator;
+use token::singleton_token::EofToken;
+use token::string::StringToken;
+use token::TokenBox;
 use error::try_parse;
 pub struct Lexer {
     char_peeker: Peeker<char>,

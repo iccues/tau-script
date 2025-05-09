@@ -2,7 +2,8 @@ use std::collections::VecDeque;
 
 use error::{NoneError, Result};
 
-use crate::{stream::{Position, Stream}, token::{ComplexBox, Token, TokenBox}};
+use crate::stream::{Position, Stream};
+use token::{ComplexBox, Token, TokenBox};
 
 pub struct Peeker<I: Clone> {
     inner: Box<dyn Stream<Item = I>>,

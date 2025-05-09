@@ -5,3 +5,4 @@ edition = "2024"
 
 [dependencies]
 error = { path = "../library/error" }
+token = { path = "../library/token" }

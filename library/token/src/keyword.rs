@@ -1,8 +1,6 @@
 use error::NoneError;
 use error::Result;
 
-use crate::stream::peeker::Peeker;
-
 use super::identifier::Identifier;
 use super::Token;
 use super::ComplexBox;
@@ -34,9 +32,9 @@ const WHILE_KEYWORD: Keyword = Keyword::While;
 const SELF_KEYWORD: Keyword = Keyword::Self_;
 
 impl Keyword {
-    pub fn parse(cursor: &mut Peeker<TokenBox>) -> Result<TokenBox> {
-        let identifier = cursor.peek()?.downcast::<Identifier>()?;
-        let ret: Result<TokenBox> = match &identifier.name()[..] {
+    pub fn parse(token: TokenBox) -> Result<TokenBox> {
+        let identifier = token.downcast::<Identifier>()?;
+        match &identifier.name()[..] {
             "let" => Ok(ComplexBox::Ref(&LET_KEYWORD)),
             "mod" => Ok(ComplexBox::Ref(&MOD_KEYWORD)),
             "def" => Ok(ComplexBox::Ref(&DEF_KEYWORD)),
@@ -47,10 +45,8 @@ impl Keyword {
             "else" => Ok(ComplexBox::Ref(&ELSE_KEYWORD)),
             "while" => Ok(ComplexBox::Ref(&WHILE_KEYWORD)),
             "self" => Ok(ComplexBox::Ref(&SELF_KEYWORD)),
-            _ => return Err(NoneError.into()),
-        };
-        cursor.next()?;
-        ret
+            _ => Err(NoneError.into()),
+        }
     }
 }
 

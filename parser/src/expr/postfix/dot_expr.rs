@@ -1,4 +1,5 @@
-use lexer::{stream::peeker::Peeker, token::{identifier::Identifier, operator::Operator, TokenBox}};
+use lexer::stream::peeker::Peeker;
+use token::{identifier::Identifier, operator::Operator, TokenBox};
 
 use crate::expr::expr::Expr;
 use error::Result;

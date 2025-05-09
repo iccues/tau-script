@@ -13,6 +13,7 @@ dependencies = [
  "lexer",
  "object",
  "parser",
+ "token",
 ]
 
 [[package]]
@@ -20,6 +21,7 @@ name = "lexer"
 version = "0.1.0"
 dependencies = [
  "error",
+ "token",
 ]
 
 [[package]]
@@ -32,6 +34,7 @@ version = "0.1.0"
 dependencies = [
  "error",
  "lexer",
+ "token",
 ]
 
 [[package]]
@@ -39,4 +42,11 @@ name = "tau-script"
 version = "0.1.0"
 dependencies = [
  "executor",
+]
+
+[[package]]
+name = "token"
+version = "0.1.0"
+dependencies = [
+ "error",
 ]

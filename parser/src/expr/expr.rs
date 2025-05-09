@@ -1,8 +1,8 @@
 use error::{try_parse, NoneError};
 use lexer::stream::peeker::Peeker;
-use lexer::token::{ComplexBox, TokenBox};
-use lexer::token::identifier::Identifier;
-use lexer::token::operator::Operator;
+use token::{ComplexBox, TokenBox};
+use token::identifier::Identifier;
+use token::operator::Operator;
 use crate::expr::binary_expr::BinaryExpr;
 use crate::expr::factor::block::Block;
 use crate::expr::factor::if_expr::IfExpr;

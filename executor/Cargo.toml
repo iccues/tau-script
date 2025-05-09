@@ -7,3 +7,4 @@ edition = "2024"
 lexer = { path = "../lexer" }
 parser = { path = "../parser" }
 object = { path = "../object" }
+token = { path = "../library/token" }

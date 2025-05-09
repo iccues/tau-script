@@ -1,11 +1,10 @@
-use lexer::{
-    stream::peeker::Peeker,
-    token::{
-        number::{Float, Integer},
-        string::StringToken,
-        TokenBox,
-    },
+use lexer::stream::peeker::Peeker;
+use token::{
+    number::{Float, Integer},
+    string::StringToken,
+    TokenBox,
 };
+
 use error::{NoneError, Result};
 
 use crate::expr::expr::Expr;

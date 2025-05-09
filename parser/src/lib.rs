@@ -1,5 +1,5 @@
 use lexer::stream::peeker::Peeker;
-use lexer::token::TokenBox;
+use token::TokenBox;
 use stmt::Stmt;
 
 pub mod expr;

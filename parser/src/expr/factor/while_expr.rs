@@ -1,6 +1,6 @@
 use error::Result;
 use lexer::stream::peeker::Peeker;
-use lexer::token::{operator::Operator, keyword::Keyword, TokenBox};
+use token::{operator::Operator, keyword::Keyword, TokenBox};
 
 use crate::expr::expr::Expr;
 

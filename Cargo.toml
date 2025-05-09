@@ -8,6 +8,9 @@ executor = { path = "executor" }
 
 [workspace]
 members = [
+    "library/error",
+    "library/token",
+
     "lexer",
     "parser",
     "object",
