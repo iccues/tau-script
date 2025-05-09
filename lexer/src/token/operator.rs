@@ -1,11 +1,5 @@
-use error::NoneError;
-use error::Result;
-
-use crate::stream::peeker::Peeker;
-
 use super::Token;
 use super::ComplexBox;
-use super::TokenBox;
 
 
 #[derive(Debug, PartialEq)]
@@ -68,6 +62,10 @@ pub enum Operator {
     /// Complex Part
     /// `::`
     DoubleColon,
+    /// `==`
+    DoubleEq,
+    /// `!=`
+    NotEq,
 
 }
 
@@ -100,8 +98,19 @@ const CARET_SINGLETON: Operator = Operator::Caret;
 const PERCENT_SINGLETON: Operator = Operator::Percent;
 
 const DOUBLE_COLON_SINGLETON: Operator = Operator::DoubleColon;
+const DOUBLE_EQ_SINGLETON: Operator = Operator::DoubleEq;
+const NOT_EQ_SINGLETON: Operator = Operator::NotEq;
 
 impl Operator {
+    pub fn parse_complex(s: &str) -> Option<ComplexBox<dyn Token>> {
+        match s {
+            "::" => Some(ComplexBox::Ref(&DOUBLE_COLON_SINGLETON)),
+            "==" => Some(ComplexBox::Ref(&DOUBLE_EQ_SINGLETON)),
+            "!=" => Some(ComplexBox::Ref(&NOT_EQ_SINGLETON)),
+            _ => None,
+        }
+    }
+
     pub fn parse(c: char) -> Option<ComplexBox<dyn Token>> {
         match c {
             ';' => Some(ComplexBox::Ref(&SEMI_SINGLETON)),
@@ -135,28 +144,12 @@ impl Operator {
         }
     }
 
-    pub fn complex_parse(peeker: &mut Peeker<TokenBox>) -> Result<TokenBox> {
-        if let [a, b] = &peeker.peeks(2)?[..] {
-            let a = &*a.downcast::<Operator>()?;
-            let b = &*b.downcast::<Operator>()?;
-            match (a, b) {
-                (Operator::Colon, Operator::Colon) => {
-                    peeker.next()?;
-                    peeker.next()?;
-                    return Ok(ComplexBox::Ref(&DOUBLE_COLON_SINGLETON));
-                }
-                _ => {}
-            }
-        };
-
-        Err(NoneError.into())
-    }
-
     pub fn priority(&self) -> isize {
         match self {
             Operator::Eq => 1,
-            Operator::Plus | Operator::Minus => 2,
-            Operator::Star | Operator::Slash | Operator::Percent => 3,
+            Operator::DoubleEq => 2,
+            Operator::Plus | Operator::Minus => 3,
+            Operator::Star | Operator::Slash | Operator::Percent => 4,
             _ => -1,
         }
     }
@@ -167,7 +160,6 @@ impl Operator {
             _ => false,
         }
     }
-
 }
 
 impl Token for Operator {}

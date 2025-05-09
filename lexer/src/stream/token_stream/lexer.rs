@@ -162,6 +162,12 @@ impl Lexer {
     }
 
     fn parse_operator(&mut self) -> Result<TokenBox> {
+        let s = self.char_peeker.peek_str(2)?;
+        if let Some(token_type) = Operator::parse_complex(&s) {
+            self.char_peeker.next()?;
+            self.char_peeker.next()?;
+            return Ok(token_type);
+        }
         let c = self.char_peeker.peek()?;
         if let Some(token_type) = Operator::parse(c) {
             self.char_peeker.next()?;

@@ -31,6 +31,9 @@ impl Exec for Expr {
                     Operator::Eq => {
                         left.get_member("set").call(Tuple::new(vec![right]))
                     }
+                    Operator::DoubleEq => {
+                        left.get_member("eq").call(Tuple::new(vec![right]))
+                    }
                     _ => unimplemented!(),
                 }
             }

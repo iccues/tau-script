@@ -1,7 +1,6 @@
 use error::{try_parse, Result};
 
 use crate::stream::{peeker::Peeker, Stream};
-use crate::token::operator::Operator;
 use crate::token::TokenBox;
 use crate::token::keyword::Keyword;
 
@@ -32,7 +31,6 @@ impl TokenProcessor {
     pub fn next_token(&mut self) -> Result<TokenBox> {
 
         try_parse!(Keyword::parse(&mut self.input));
-        try_parse!(Operator::complex_parse(&mut self.input));
 
         self.input.next()
     }

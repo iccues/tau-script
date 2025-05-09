@@ -1,5 +1,6 @@
 use crate::object::{object::Object, object_trait::ObjectTrait};
 
+use super::bool::Bool;
 use super::string::String_;
 use crate::types::callable::closure::Closure;
 use crate::types::compound::tuple::Tuple;
@@ -15,6 +16,7 @@ impl ObjectTrait for Integer {
         match name {
             "add" => Closure::new_first(Integer::add, this),
             "to_string" => Closure::new_first(Integer::to_string, this),
+            "eq" => Closure::new_first(Integer::eq, this),
             _ => Error::new("get_member not implemented"),
         }
     }
@@ -33,6 +35,18 @@ impl Integer {
                 let b = b.get_data_match::<Integer>().unwrap();
                 let result = a.value + b.value;
                 Integer::new(result)
+            }
+            _ => Error::new("Invalid input"),
+        }
+    }
+
+    fn eq(input: Object) -> Object {
+        match input.get_data_match::<Tuple>().unwrap().elements.as_slice() {
+            [a, b] => {
+                let a = a.get_data_match::<Integer>().unwrap();
+                let b = b.get_data_match::<Integer>().unwrap();
+                let result = a.value == b.value;
+                Bool::new(result)
             }
             _ => Error::new("Invalid input"),
         }
