@@ -1,8 +1,7 @@
 use std::collections::VecDeque;
 
 use error::{NoneError, Result};
-
-use crate::stream::{Position, Stream};
+use super::{Position, Stream};
 use token::{ComplexBox, Token, TokenBox};
 
 pub struct Peeker<I: Clone> {

@@ -1,7 +1,7 @@
 use std::io::{BufRead, Lines};
 use error::Result;
 
-use super::{Position, Stream};
+use stream::{Position, Stream};
 
 
 pub const EOF_CHAR: char = '\0';

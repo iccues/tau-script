@@ -1,14 +1,12 @@
 use std::io::{BufReader, Read};
 
-use stream::{
-    Stream,
-    char_stream::CharStream,
-    peeker::Peeker,
-    token_stream::{lexer::Lexer, token_processor::TokenProcessor},
-};
+use ::stream::{peeker::Peeker, Stream};
+use char_stream::CharStream;
 use token::TokenBox;
+use token_stream::{lexer::Lexer, token_processor::TokenProcessor};
 
-pub mod stream;
+pub mod token_stream;
+pub mod char_stream;
 
 pub fn get_lexer(input: impl Read + 'static) -> Peeker<TokenBox> {
     let char_stream = CharStream::new(BufReader::new(input)).peeker();

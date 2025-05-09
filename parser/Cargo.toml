@@ -7,3 +7,4 @@ edition = "2021"
 error = { path = "../library/error" }
 lexer = { path = "../lexer" }
 token = { path = "../library/token" }
+stream = { path = "../library/stream" }

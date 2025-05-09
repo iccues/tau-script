@@ -1,15 +1,12 @@
-use error::Result;
 use peeker::Peeker;
 
-pub mod char_stream;
-pub mod token_stream;
 pub mod peeker;
 
 pub trait Stream {
     type Item: Clone;
 
-    fn next(&mut self) -> Result<Self::Item>;
-    fn nexts(&mut self, n: usize) -> Result<Vec<Self::Item>> {
+    fn next(&mut self) -> error::Result<Self::Item>;
+    fn nexts(&mut self, n: usize) -> error::Result<Vec<Self::Item>> {
         let mut items = Vec::with_capacity(n);
         for _ in 0..n {
             items.push(self.next()?);
@@ -28,8 +25,8 @@ pub trait Stream {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Position {
-    line: usize,
-    column: usize,
+    pub line: usize,
+    pub column: usize,
 }
 
 impl Position {

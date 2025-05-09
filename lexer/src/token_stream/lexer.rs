@@ -1,7 +1,8 @@
 use error::{ErrKind, NoneError, Result};
+use stream::Position;
 
-use crate::stream::char_stream::EOF_CHAR;
-use crate::stream::{peeker::Peeker, Stream};
+use crate::char_stream::EOF_CHAR;
+use stream::{peeker::Peeker, Stream};
 use token::comment::Comment;
 use token::identifier::Identifier;
 use token::number::{Float, Integer};
@@ -21,10 +22,10 @@ impl Stream for Lexer {
         self.next_token()
     }
 
-    fn last_position(&self) -> crate::stream::Position {
+    fn last_position(&self) -> Position {
         self.char_peeker.last_position()
     }
-    fn next_position(&self) -> crate::stream::Position {
+    fn next_position(&self) -> Position {
         self.char_peeker.next_position()
     }
 }

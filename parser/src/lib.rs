@@ -1,4 +1,4 @@
-use lexer::stream::peeker::Peeker;
+use stream::peeker::Peeker;
 use token::TokenBox;
 use stmt::Stmt;
 

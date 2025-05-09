@@ -10,6 +10,7 @@ executor = { path = "executor" }
 members = [
     "library/error",
     "library/token",
+    "library/stream",
 
     "lexer",
     "parser",

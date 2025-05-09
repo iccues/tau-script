@@ -21,6 +21,7 @@ name = "lexer"
 version = "0.1.0"
 dependencies = [
  "error",
+ "stream",
  "token",
 ]
 
@@ -34,6 +35,15 @@ version = "0.1.0"
 dependencies = [
  "error",
  "lexer",
+ "stream",
+ "token",
+]
+
+[[package]]
+name = "stream"
+version = "0.1.0"
+dependencies = [
+ "error",
  "token",
 ]
 

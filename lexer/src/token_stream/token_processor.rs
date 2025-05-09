@@ -1,6 +1,7 @@
 use error::Result;
 
-use crate::stream::{peeker::Peeker, Stream};
+use stream::Position;
+use stream::{peeker::Peeker, Stream};
 use token::TokenBox;
 use token::keyword::Keyword;
 
@@ -15,10 +16,10 @@ impl Stream for TokenProcessor {
         self.next_token()
     }
 
-    fn last_position(&self) -> crate::stream::Position {
+    fn last_position(&self) -> Position {
         self.input.last_position()
     }
-    fn next_position(&self) -> crate::stream::Position {
+    fn next_position(&self) -> Position {
         self.input.next_position()
     }
 }

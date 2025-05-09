@@ -1,5 +1,5 @@
 use error::Result;
-use lexer::stream::peeker::Peeker;
+use stream::peeker::Peeker;
 use token::{operator::Operator, TokenBox};
 
 use crate::expr::expr::Expr;

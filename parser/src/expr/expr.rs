@@ -1,5 +1,5 @@
 use error::{try_parse, NoneError};
-use lexer::stream::peeker::Peeker;
+use stream::peeker::Peeker;
 use token::{ComplexBox, TokenBox};
 use token::identifier::Identifier;
 use token::operator::Operator;
