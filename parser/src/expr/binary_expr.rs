@@ -15,7 +15,7 @@ impl BinaryExpr {
         let mut factors = Vec::new();
         let mut operators: Vec<ComplexBox<Operator>> = Vec::new();
 
-        factors.push(Expr::parse_factor(cursor)?);
+        factors.push(Expr::parse_postfix(cursor)?);
 
         while cursor
             .peek()?
@@ -39,7 +39,7 @@ impl BinaryExpr {
             }
 
             operators.push(operator);
-            factors.push(Expr::parse_factor(cursor)?);
+            factors.push(Expr::parse_postfix(cursor)?);
         }
 
         while !operators.is_empty() {

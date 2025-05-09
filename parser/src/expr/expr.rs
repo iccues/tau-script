@@ -15,12 +15,12 @@ use crate::expr::postfix::dot_expr::DotExpr;
 #[derive(Debug)]
 pub enum Expr {
 
+    /// Binary expression
+    Binary(BinaryExpr),
+
     /// Postfix expression
     Call(CallExpr),
     Dot(DotExpr),
-
-    /// Binary expression
-    Binary(BinaryExpr),
 
     /// Factors
     Block(Block),
@@ -38,11 +38,15 @@ pub enum Expr {
 
 impl Expr {
     pub fn parse(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
-        Self::parse_postfix(cursor)
+        Self::parse_binary(cursor)
     }
 
-    fn parse_postfix(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
-        let mut first = Self::parse_binary(cursor)?;
+    fn parse_binary(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
+        BinaryExpr::parse(cursor)
+    }
+
+    pub fn parse_postfix(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
+        let mut first = Self::parse_factor(cursor)?;
         let mut changed = true;
         let mut t;
         while changed {
@@ -52,10 +56,6 @@ impl Expr {
             changed = changed || t;
         }
         Ok(first)
-    }
-
-    fn parse_binary(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {
-        BinaryExpr::parse(cursor)
     }
 
     pub fn parse_factor(cursor: &mut Cursor<TokenBox>) -> error::Result<Box<Expr>> {

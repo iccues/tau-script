@@ -1,7 +1,6 @@
 use error::{ErrKind, NoneError, Result};
 
 use crate::stream::char_stream::EOF_CHAR;
-// use crate::error::{ErrKind, Error, Result};
 use crate::stream::{peekable::peeker::Peeker, Stream};
 use crate::token::comment::Comment;
 use crate::token::identifier::Identifier;
