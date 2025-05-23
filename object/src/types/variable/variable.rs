@@ -1,6 +1,6 @@
 use crate::object::{object::Object, object_trait::ObjectTrait};
 
-use crate::types::callable::{closure::Closure, func::Func};
+use crate::types::callable::closure::Closure;
 use crate::types::compound::tuple::Tuple;
 use crate::types::control::undefined::Undefined;
 use crate::types::error::error::Error;
@@ -12,10 +12,7 @@ pub struct Variable {
 impl ObjectTrait for Variable {
     fn get_member_fn(this: Object, name: &str) -> Object {
         match name {
-            "set" => Closure::new(
-                Func::new(Variable::set),
-                vec![Some(this.clone())]
-            ),
+            "set" => Closure::new_first(Variable::set, this),
             name => {
                 let this = this.get_data::<Variable>().unwrap();
                 this.value.get_member(name)

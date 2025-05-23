@@ -17,6 +17,7 @@ impl ObjectTrait for Integer {
             "add" => Closure::new_first(Integer::add, this),
             "to_string" => Closure::new_first(Integer::to_string, this),
             "eq" => Closure::new_first(Integer::eq, this),
+            "ne" => Closure::new_first(Integer::ne, this),
             _ => Error::new("get_member not implemented"),
         }
     }
@@ -46,6 +47,18 @@ impl Integer {
                 let a = a.get_data_match::<Integer>().unwrap();
                 let b = b.get_data_match::<Integer>().unwrap();
                 let result = a.value == b.value;
+                Bool::new(result)
+            }
+            _ => Error::new("Invalid input"),
+        }
+    }
+
+    fn ne(input: Object) -> Object {
+        match input.get_data_match::<Tuple>().unwrap().elements.as_slice() {
+            [a, b] => {
+                let a = a.get_data_match::<Integer>().unwrap();
+                let b = b.get_data_match::<Integer>().unwrap();
+                let result = a.value != b.value;
                 Bool::new(result)
             }
             _ => Error::new("Invalid input"),

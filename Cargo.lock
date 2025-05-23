@@ -52,6 +52,10 @@ name = "tau-script"
 version = "0.1.0"
 dependencies = [
  "executor",
+ "lexer",
+ "object",
+ "parser",
+ "token",
 ]
 
 [[package]]

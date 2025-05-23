@@ -147,7 +147,7 @@ impl Operator {
     pub fn priority(&self) -> isize {
         match self {
             Operator::Eq => 1,
-            Operator::DoubleEq => 2,
+            Operator::DoubleEq | Operator::NotEq => 2,
             Operator::Plus | Operator::Minus => 3,
             Operator::Star | Operator::Slash | Operator::Percent => 4,
             _ => -1,

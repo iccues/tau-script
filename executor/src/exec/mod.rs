@@ -1,4 +1,4 @@
-use object::{object::object::Object, types::primitive::{number::Integer, string::String_}};
+use object::{object::object::Object, types::{control::undefined::Undefined, primitive::{bool::Bool, number::Integer, string::String_}}};
 use parser::stmt::Stmt;
 use token::operator::Operator;
 use object::types::compound::tuple::Tuple;
@@ -31,6 +31,9 @@ impl Exec for Expr {
                     Operator::Eq => {
                         left.get_member("set").call(Tuple::new(vec![right]))
                     }
+                    Operator::NotEq => {
+                        left.get_member("ne").call(Tuple::new(vec![right]))
+                    }
                     Operator::DoubleEq => {
                         left.get_member("eq").call(Tuple::new(vec![right]))
                     }
@@ -50,7 +53,31 @@ impl Exec for Expr {
                 }
                 Tuple::new(args)
             }
-            _ => unimplemented!(),
+            Expr::If(expr) => {
+                let condition = expr.condition.exec(env);
+                if condition.get_data_match::<Bool>().is_some_and(|b| b.value) {
+                    expr.then_block.exec(env)
+                } else {
+                    expr.else_block.as_ref().map(|block| block.exec(env)).unwrap_or_else(|| Undefined::new())
+                }
+            }
+            Expr::While(expr) => {
+                let mut result = Undefined::new();
+                while expr.condition.exec(env).get_data_match::<Bool>().is_some_and(|b| b.value) {
+                    result = expr.then_block.exec(env);
+                }
+                result
+            }
+            Expr::Block(expr) => {
+                for stmt in expr.statments.iter() {
+                    stmt.exec(env);
+                }
+                expr.end_value.as_ref().map(|end_value| end_value.exec(env)).unwrap_or_else(|| Undefined::new())
+            }
+            expr => {
+                println!("Expr not implemented: {:?}", expr);
+                unimplemented!()
+            },
         }
     }
 }

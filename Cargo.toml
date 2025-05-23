@@ -6,6 +6,13 @@ edition = "2024"
 [dependencies]
 executor = { path = "executor" }
 
+[dev-dependencies]
+lexer = { path = "lexer" }
+parser = { path = "parser" }
+object = { path = "object" }
+token = { path = "library/token" }
+
+
 [workspace]
 members = [
     "library/error",
