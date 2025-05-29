@@ -1,9 +1,9 @@
 use crate::object::{object::Object, object_trait::ObjectTrait};
+use crate::tuple_match;
 
 use super::bool::Bool;
 use super::string::String_;
 use crate::types::callable::closure::Closure;
-use crate::types::compound::tuple::Tuple;
 use crate::types::error::error::Error;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -30,54 +30,34 @@ impl Integer {
 
 
     fn add(input: Object) -> Object {
-        match input.get_data_match::<Tuple>().unwrap().elements.as_slice() {
-            [a, b] => {
-                let a = a.get_data_match::<Integer>().unwrap();
-                let b = b.get_data_match::<Integer>().unwrap();
-                let result = a.value + b.value;
-                Integer::new(result)
-            }
-            _ => Error::new("Invalid input"),
-        }
+        tuple_match!(input, (a: Integer, b: Integer) {
+            Integer::new(a.value + b.value)
+        })
     }
 
     fn eq(input: Object) -> Object {
-        match input.get_data_match::<Tuple>().unwrap().elements.as_slice() {
-            [a, b] => {
-                let a = a.get_data_match::<Integer>().unwrap();
-                let b = b.get_data_match::<Integer>().unwrap();
-                let result = a.value == b.value;
-                Bool::new(result)
-            }
-            _ => Error::new("Invalid input"),
-        }
+        tuple_match!(input, (a: Integer, b: Integer) {
+            Bool::new(a.value == b.value)
+        })
     }
 
     fn ne(input: Object) -> Object {
-        match input.get_data_match::<Tuple>().unwrap().elements.as_slice() {
-            [a, b] => {
-                let a = a.get_data_match::<Integer>().unwrap();
-                let b = b.get_data_match::<Integer>().unwrap();
-                let result = a.value != b.value;
-                Bool::new(result)
-            }
-            _ => Error::new("Invalid input"),
-        }
+        tuple_match!(input, (a: Integer, b: Integer) {
+            Bool::new(a.value != b.value)
+        })
     }
 
     fn to_string(input: Object) -> Object {
-        match input.get_data_match::<Tuple>().unwrap().elements.as_slice() {
-            [a] => {
-                let a = a.get_data_match::<Integer>().unwrap();
-                String_::new(a.value.to_string())
-            }
-            _ => Error::new("Invalid input"),
-        }
-    }
+        tuple_match!(input, (a: Integer) {
+            String_::new(a.value.to_string())
+        })
+    } 
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::tuple;
+
     use super::*;
 
     #[test]
@@ -85,7 +65,7 @@ mod tests {
         let int1 = Integer::new(42);
         let int2 = Integer::new(1);
 
-        let sum = int1.get_member("add").call(Tuple::new(vec![int2]));
+        let sum = int1.get_member("add").call(tuple!(int2));
 
         assert_eq!(
             sum.get_data::<Integer>().unwrap().value,
@@ -97,7 +77,7 @@ mod tests {
     fn test_to_string() {
         let int = Integer::new(42);
 
-        let str_obj = int.get_member("to_string").call(Tuple::new(vec![]));
+        let str_obj = int.get_member("to_string").call(tuple!());
 
         assert_eq!(
             str_obj.get_data::<String_>().unwrap().value,

@@ -38,12 +38,16 @@ impl Variable {
     }
 
     fn set(input: Object) -> Object {
-        match input.get_data_match::<Tuple>().unwrap().elements.as_slice() {
-            [a, b] => {
-                a.get_data::<Variable>().unwrap().value = b.clone();
-                a.clone()
-            }
-            _ => Error::new("Invalid input"),
-        }
+        let Some(tuple) = input.get_data_match::<Tuple>() else {
+            return Error::new("Invalid input");
+        };
+        let [a, b] = tuple.as_slice() else {
+            return Error::new("Invalid input");
+        };
+        let Some(var) = a.get_data::<Variable>() else {
+            return Error::new("First element must be a Variable");
+        };
+        var.value = b.clone();
+        a.clone()
     }
 }

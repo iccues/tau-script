@@ -1,4 +1,8 @@
-use crate::{object::{object::Object, object_trait::ObjectTrait}, types::{callable::closure::Closure, compound::tuple::Tuple, error::error::Error, primitive::string::String_}};
+use crate::{
+    object::{object::Object, object_trait::ObjectTrait},
+    tuple_match,
+    types::{callable::closure::Closure, error::error::Error, primitive::string::String_},
+};
 
 pub struct Undefined;
 
@@ -17,12 +21,8 @@ impl Undefined {
     }
 
     fn to_string(input: Object) -> Object {
-        match input.get_data_match::<Tuple>().unwrap().elements.as_slice() {
-            [a] => {
-                a.get_data_match::<Undefined>().unwrap();
-                String_::new("undefined".to_string())
-            }
-            _ => Error::new("Invalid input"),
-        }
+        tuple_match!(input, (_a: Undefined) {
+            String_::new("undefined".to_string())
+        })
     }
 }

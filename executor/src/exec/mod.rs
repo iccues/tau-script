@@ -1,4 +1,4 @@
-use object::{object::object::Object, types::{control::undefined::Undefined, primitive::{bool::Bool, number::Integer, string::String_}}};
+use object::{object::object::Object, tuple, types::{control::undefined::Undefined, primitive::{bool::Bool, number::Integer, string::String_}}};
 use parser::stmt::Stmt;
 use token::operator::Operator;
 use object::types::compound::tuple::Tuple;
@@ -26,16 +26,16 @@ impl Exec for Expr {
                 let right = expr.right.exec(env);
                 match &*expr.operator {
                     Operator::Plus => {
-                        left.get_member("add").call(Tuple::new(vec![right]))
+                        left.get_member("add").call(tuple!(right))
                     }
                     Operator::Eq => {
-                        left.get_member("set").call(Tuple::new(vec![right]))
+                        left.get_member("set").call(tuple!(right))
                     }
                     Operator::NotEq => {
-                        left.get_member("ne").call(Tuple::new(vec![right]))
+                        left.get_member("ne").call(tuple!(right))
                     }
                     Operator::DoubleEq => {
-                        left.get_member("eq").call(Tuple::new(vec![right]))
+                        left.get_member("eq").call(tuple!(right))
                     }
                     _ => unimplemented!(),
                 }

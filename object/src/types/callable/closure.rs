@@ -12,8 +12,8 @@ impl ObjectTrait for Closure {
         let this = this.get_data::<Closure>().unwrap();
         let args = args.get_data_match::<Tuple>().unwrap();
 
-        let args = this.curry(&args.elements);
-        this.func.call(Tuple::new(args.unwrap()))
+        let args = this.curry(args.as_slice()).unwrap();
+        this.func.call(Tuple::new(args))
     }
 }
 

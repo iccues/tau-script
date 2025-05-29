@@ -1,4 +1,4 @@
-use crate::{object::{object::Object, object_trait::ObjectTrait}, types::{callable::closure::Closure, compound::tuple::Tuple, primitive::string::String_}};
+use crate::{object::{object::Object, object_trait::ObjectTrait}, tuple_match, types::{callable::closure::Closure, primitive::string::String_}};
 
 pub struct Error {
     pub message: String,
@@ -19,12 +19,8 @@ impl Error {
     }
 
     fn to_string(input: Object) -> Object {
-        match input.get_data_match::<Tuple>().unwrap().elements.as_slice() {
-            [a] => {
-                let a = a.get_data_match::<Error>().unwrap();
-                String_::new(a.message.clone())
-            }
-            _ => Error::new("Invalid input"),
-        }
+        tuple_match!(input, (a: Error) {
+            String_::new(a.message.clone())
+        })
     }
 }

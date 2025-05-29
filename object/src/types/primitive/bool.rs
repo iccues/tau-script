@@ -1,4 +1,5 @@
-use crate::{object::{object::Object, object_trait::ObjectTrait}, types::{callable::closure::Closure, compound::tuple::Tuple, error::error::Error}};
+use crate::tuple_match;
+use crate::{object::{object::Object, object_trait::ObjectTrait}, types::{callable::closure::Closure, error::error::Error}};
 
 use super::string::String_;
 
@@ -22,12 +23,8 @@ impl Bool {
     }
 
     fn to_string(input: Object) -> Object {
-        match input.get_data_match::<Tuple>().unwrap().elements.as_slice() {
-            [a] => {
-                let a = a.get_data_match::<Bool>().unwrap();
-                String_::new(a.value.to_string())
-            }
-            _ => Error::new("Invalid input"),
-        }
+        tuple_match!(input, (a: Bool) {
+            String_::new(a.value.to_string())
+        })
     }
 }

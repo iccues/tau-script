@@ -4,7 +4,7 @@ use crate::types::error::error::Error;
 use crate::types::primitive::number::Integer;
 
 pub struct Tuple {
-    pub elements: Vec<Object>,
+    elements: Vec<Object>,
 }
 
 impl ObjectTrait for Tuple {
@@ -27,9 +27,39 @@ impl Tuple {
         Integer::new(tuple.elements.len() as i32)
     }
 
-    pub fn get(&self, index: usize) -> Option<&Object> {
-        self.elements.get(index)
+    pub fn as_slice(&self) -> &[Object] {
+        &self.elements
     }
+}
+
+#[macro_export]
+macro_rules! tuple {
+    ($($item:tt)*) => {
+        $crate::types::compound::tuple::Tuple::new(vec![$($item)*])
+    };
+}
+
+#[macro_export]
+macro_rules! tuple_match {
+    ($input:expr, ($($name:ident : $ty:ty),* $(,)? ) $then:block) => {
+        tuple_match!($input, ($($name : $ty),*) $then else {
+            $crate::types::error::error::Error::new("Tuple match failed")
+        })
+    };
+    ($input:expr, ($($name:ident : $ty:ty),* $(,)? ) $then:block else $else:block) => { 'tuple_match: {
+        let Some(tuple) = $input.get_data_match::<$crate::types::compound::tuple::Tuple>() else {
+            break 'tuple_match ($else);
+        };
+        let [$($name),+] = tuple.as_slice() else {
+            break 'tuple_match ($else);
+        };
+        $(
+            let Some($name) = $name.get_data_match::<$ty>() else {
+                break 'tuple_match ($else);
+            };
+        )*
+        $then
+    }};
 }
 
 #[cfg(test)]
