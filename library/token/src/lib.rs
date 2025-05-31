@@ -61,7 +61,7 @@ impl<T: AsAny + ?Sized> ComplexBox<T> {
                     .map(|c| ComplexBox::Rc(c))
             }
             ComplexBox::Ref(r) => {
-                (*r).as_any()
+                r.as_any()
                     .downcast_ref::<U>()
                     .map(|r| ComplexBox::Ref(r))
             }
@@ -77,8 +77,8 @@ impl<T: 'static + ?Sized> Deref for ComplexBox<T> {
     type Target = T;
     fn deref(&self) -> &Self::Target {
         match self {
-            ComplexBox::Rc(b) => b.deref(),
-            ComplexBox::Ref(r) => *r,
+            ComplexBox::Rc(b) => b,
+            ComplexBox::Ref(r) => r,
         }
     }
 }

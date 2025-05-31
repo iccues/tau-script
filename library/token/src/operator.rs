@@ -155,10 +155,7 @@ impl Operator {
     }
 
     pub fn is_unary(&self) -> bool {
-        match self {
-            Operator::Plus | Operator::Minus | Operator::Bang | Operator::Tilde => true,
-            _ => false,
-        }
+        matches!(self, Operator::Plus | Operator::Minus | Operator::Bang | Operator::Tilde)
     }
 }
 

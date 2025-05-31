@@ -61,7 +61,7 @@ impl<I: Clone> Peeker<I> {
         self.buffer[n].2.clone()
     }
 
-    pub fn peeks<'a>(&'a mut self, n: usize) -> Result<Vec<I>> {
+    pub fn peeks(&mut self, n: usize) -> Result<Vec<I>> {
         for _ in self.buffer.len()..n {
             self.get_next();
         }

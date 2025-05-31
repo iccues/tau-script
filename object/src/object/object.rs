@@ -23,7 +23,7 @@ impl Object {
         }
     }
 
-    pub unsafe fn get_data_uncheck<T: ObjectTrait>(&self) -> &mut T { // unsafe
+    pub unsafe fn get_data_uncheck<T: ObjectTrait>(&self) -> &mut T {
         unsafe { &mut *(self.data as *mut T) }
     }
 
@@ -37,14 +37,14 @@ impl Object {
 
     pub fn get_data_match<T: ObjectTrait>(&self) -> Option<&mut T> {
         if let Some(data) = (T::OBJ_TYPE_BOX.get_obj_type().match_)(T::OBJ_TYPE_BOX, self.clone()) {
-            Some(unsafe { transmute(data.get_data_uncheck::<T>()) })
+            Some(unsafe { transmute::<&mut T, &mut T>(data.get_data_uncheck::<T>()) })
         } else {
             None
         }
     }
 
     pub fn get_obj_type(&self) -> &ObjType {
-        unsafe { (&*self.obj_type).get_data_uncheck::<ObjType>() }
+        unsafe { (*self.obj_type).get_data_uncheck::<ObjType>() }
     }
 
     pub fn get_member(&self, name: &str) -> Object {
