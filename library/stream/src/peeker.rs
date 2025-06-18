@@ -2,7 +2,7 @@ use std::collections::VecDeque;
 
 use error::{NoneError, Result};
 use super::{Position, Stream};
-use token::{ComplexBox, Token, TokenBox};
+use token::{Token, TokenBox};
 
 pub struct Peeker<I: Clone> {
     inner: Box<dyn Stream<Item = I>>,
@@ -104,7 +104,7 @@ impl Peeker<char> {
 }
 
 impl Peeker<TokenBox> {
-    pub fn eat_type<T: Token>(&mut self) -> Result<ComplexBox<T>> {
+    pub fn eat_type<T: Token>(&mut self) -> Result<TokenBox<T>> {
         let item = self.peek()?.downcast()?;
         let _ = self.next();
         Ok(item)

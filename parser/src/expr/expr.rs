@@ -1,6 +1,6 @@
 use error::{try_parse, NoneError};
 use stream::peeker::Peeker;
-use token::{ComplexBox, TokenBox};
+use token::TokenBox;
 use token::identifier::Identifier;
 use token::operator::Operator;
 use crate::expr::binary_expr::BinaryExpr;
@@ -31,7 +31,7 @@ pub enum Expr {
 
     Identifier(String),
     UnaryExpr {
-        operator: ComplexBox<Operator>,
+        operator: TokenBox<Operator>,
         expr: Box<Expr>,
     },
 }

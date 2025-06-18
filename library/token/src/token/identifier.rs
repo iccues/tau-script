@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
-use super::Token;
-use super::ComplexBox;
+use crate::Token;
+use crate::TokenBox;
 
 
 #[derive(Debug, PartialEq)]
@@ -12,8 +12,8 @@ pub struct Identifier {
 impl Token for Identifier {}
 
 impl Identifier {
-    pub fn new(name: String) -> ComplexBox<dyn Token> {
-        ComplexBox::Rc(Rc::new(Identifier { name }))
+    pub fn new(name: String) -> TokenBox {
+        TokenBox::Rc(Rc::new(Identifier { name }))
     }
 
     pub fn name(&self) -> String {

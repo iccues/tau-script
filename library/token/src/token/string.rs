@@ -1,5 +1,5 @@
-use super::Token;
-use super::ComplexBox;
+use crate::Token;
+use crate::TokenBox;
 use std::rc::Rc;
 
 
@@ -9,8 +9,8 @@ pub struct StringToken {
 }
 
 impl StringToken {
-    pub fn new(string: String) -> ComplexBox<dyn Token> {
-        ComplexBox::Rc(Rc::new(Self { string }))
+    pub fn new(string: String) -> TokenBox {
+        TokenBox::Rc(Rc::new(Self { string }))
     }
 
     pub fn string(&self) -> String {

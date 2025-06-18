@@ -1,5 +1,5 @@
-use super::Token;
-use super::ComplexBox;
+use crate::Token;
+use crate::TokenBox;
 
 
 #[derive(Debug, PartialEq)]
@@ -102,44 +102,44 @@ const DOUBLE_EQ_SINGLETON: Operator = Operator::DoubleEq;
 const NOT_EQ_SINGLETON: Operator = Operator::NotEq;
 
 impl Operator {
-    pub fn parse_complex(s: &str) -> Option<ComplexBox<dyn Token>> {
+    pub fn parse_complex(s: &str) -> Option<TokenBox> {
         match s {
-            "::" => Some(ComplexBox::Ref(&DOUBLE_COLON_SINGLETON)),
-            "==" => Some(ComplexBox::Ref(&DOUBLE_EQ_SINGLETON)),
-            "!=" => Some(ComplexBox::Ref(&NOT_EQ_SINGLETON)),
+            "::" => Some(TokenBox::Ref(&DOUBLE_COLON_SINGLETON)),
+            "==" => Some(TokenBox::Ref(&DOUBLE_EQ_SINGLETON)),
+            "!=" => Some(TokenBox::Ref(&NOT_EQ_SINGLETON)),
             _ => None,
         }
     }
 
-    pub fn parse(c: char) -> Option<ComplexBox<dyn Token>> {
+    pub fn parse(c: char) -> Option<TokenBox> {
         match c {
-            ';' => Some(ComplexBox::Ref(&SEMI_SINGLETON)),
-            ',' => Some(ComplexBox::Ref(&COMMA_SINGLETON)),
-            '.' => Some(ComplexBox::Ref(&DOT_SINGLETON)),
-            '(' => Some(ComplexBox::Ref(&OPEN_PAREN_SINGLETON)),
-            ')' => Some(ComplexBox::Ref(&CLOSE_PAREN_SINGLETON)),
-            '{' => Some(ComplexBox::Ref(&OPEN_BRACE_SINGLETON)),
-            '}' => Some(ComplexBox::Ref(&CLOSE_BRACE_SINGLETON)),
-            '[' => Some(ComplexBox::Ref(&OPEN_BRACKET_SINGLETON)),
-            ']' => Some(ComplexBox::Ref(&CLOSE_BRACKET_SINGLETON)),
-            '@' => Some(ComplexBox::Ref(&AT_SINGLETON)),
-            '#' => Some(ComplexBox::Ref(&POUND_SINGLETON)),
-            '~' => Some(ComplexBox::Ref(&TILDE_SINGLETON)),
-            '?' => Some(ComplexBox::Ref(&QUESTION_SINGLETON)),
-            ':' => Some(ComplexBox::Ref(&COLON_SINGLETON)),
-            '$' => Some(ComplexBox::Ref(&DOLLAR_SINGLETON)),
-            '=' => Some(ComplexBox::Ref(&EQ_SINGLETON)),
-            '!' => Some(ComplexBox::Ref(&BANG_SINGLETON)),
-            '<' => Some(ComplexBox::Ref(&LT_SINGLETON)),
-            '>' => Some(ComplexBox::Ref(&GT_SINGLETON)),
-            '-' => Some(ComplexBox::Ref(&MINUS_SINGLETON)),
-            '&' => Some(ComplexBox::Ref(&AND_SINGLETON)),
-            '|' => Some(ComplexBox::Ref(&OR_SINGLETON)),
-            '+' => Some(ComplexBox::Ref(&PLUS_SINGLETON)),
-            '*' => Some(ComplexBox::Ref(&STAR_SINGLETON)),
-            '/' => Some(ComplexBox::Ref(&SLASH_SINGLETON)),
-            '^' => Some(ComplexBox::Ref(&CARET_SINGLETON)),
-            '%' => Some(ComplexBox::Ref(&PERCENT_SINGLETON)),
+            ';' => Some(TokenBox::Ref(&SEMI_SINGLETON)),
+            ',' => Some(TokenBox::Ref(&COMMA_SINGLETON)),
+            '.' => Some(TokenBox::Ref(&DOT_SINGLETON)),
+            '(' => Some(TokenBox::Ref(&OPEN_PAREN_SINGLETON)),
+            ')' => Some(TokenBox::Ref(&CLOSE_PAREN_SINGLETON)),
+            '{' => Some(TokenBox::Ref(&OPEN_BRACE_SINGLETON)),
+            '}' => Some(TokenBox::Ref(&CLOSE_BRACE_SINGLETON)),
+            '[' => Some(TokenBox::Ref(&OPEN_BRACKET_SINGLETON)),
+            ']' => Some(TokenBox::Ref(&CLOSE_BRACKET_SINGLETON)),
+            '@' => Some(TokenBox::Ref(&AT_SINGLETON)),
+            '#' => Some(TokenBox::Ref(&POUND_SINGLETON)),
+            '~' => Some(TokenBox::Ref(&TILDE_SINGLETON)),
+            '?' => Some(TokenBox::Ref(&QUESTION_SINGLETON)),
+            ':' => Some(TokenBox::Ref(&COLON_SINGLETON)),
+            '$' => Some(TokenBox::Ref(&DOLLAR_SINGLETON)),
+            '=' => Some(TokenBox::Ref(&EQ_SINGLETON)),
+            '!' => Some(TokenBox::Ref(&BANG_SINGLETON)),
+            '<' => Some(TokenBox::Ref(&LT_SINGLETON)),
+            '>' => Some(TokenBox::Ref(&GT_SINGLETON)),
+            '-' => Some(TokenBox::Ref(&MINUS_SINGLETON)),
+            '&' => Some(TokenBox::Ref(&AND_SINGLETON)),
+            '|' => Some(TokenBox::Ref(&OR_SINGLETON)),
+            '+' => Some(TokenBox::Ref(&PLUS_SINGLETON)),
+            '*' => Some(TokenBox::Ref(&STAR_SINGLETON)),
+            '/' => Some(TokenBox::Ref(&SLASH_SINGLETON)),
+            '^' => Some(TokenBox::Ref(&CARET_SINGLETON)),
+            '%' => Some(TokenBox::Ref(&PERCENT_SINGLETON)),
             _ => None,
         }
     }

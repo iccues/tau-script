@@ -1,5 +1,5 @@
-use super::Token;
-use super::ComplexBox;
+use crate::Token;
+use crate::TokenBox;
 use std::rc::Rc;
 
 #[derive(Debug, PartialEq)]
@@ -8,8 +8,8 @@ pub struct Integer {
 }
 
 impl Integer {
-    pub fn new(num: String) -> ComplexBox<dyn Token> {
-        ComplexBox::Rc(Rc::new(Integer { number: num }))
+    pub fn new(num: String) -> TokenBox {
+        TokenBox::Rc(Rc::new(Integer { number: num }))
     }
 
     pub fn number(&self) -> String {
@@ -26,8 +26,8 @@ pub struct Float {
 }
 
 impl Float {
-    pub fn new(num: String) -> ComplexBox<dyn Token> {
-        ComplexBox::Rc(Rc::new(Float { number: num }))
+    pub fn new(num: String) -> TokenBox {
+        TokenBox::Rc(Rc::new(Float { number: num }))
     }
 
     pub fn number(&self) -> String {

@@ -1,10 +1,9 @@
 use error::NoneError;
 use error::Result;
 
-use super::identifier::Identifier;
-use super::Token;
-use super::ComplexBox;
-use super::TokenBox;
+use crate::identifier::Identifier;
+use crate::Token;
+use crate::TokenBox;
 
 #[derive(Debug, PartialEq)]
 pub enum Keyword {
@@ -35,16 +34,16 @@ impl Keyword {
     pub fn parse(token: TokenBox) -> Result<TokenBox> {
         let identifier = token.downcast::<Identifier>()?;
         match &identifier.name()[..] {
-            "let" => Ok(ComplexBox::Ref(&LET_KEYWORD)),
-            "mod" => Ok(ComplexBox::Ref(&MOD_KEYWORD)),
-            "def" => Ok(ComplexBox::Ref(&DEF_KEYWORD)),
-            "type" => Ok(ComplexBox::Ref(&TYPE_KEYWORD)),
-            "var" => Ok(ComplexBox::Ref(&VAR_KEYWORD)),
-            "expr" => Ok(ComplexBox::Ref(&FUNC_KEYWORD)),
-            "if" => Ok(ComplexBox::Ref(&IF_KEYWORD)),
-            "else" => Ok(ComplexBox::Ref(&ELSE_KEYWORD)),
-            "while" => Ok(ComplexBox::Ref(&WHILE_KEYWORD)),
-            "self" => Ok(ComplexBox::Ref(&SELF_KEYWORD)),
+            "let" => Ok(TokenBox::Ref(&LET_KEYWORD)),
+            "mod" => Ok(TokenBox::Ref(&MOD_KEYWORD)),
+            "def" => Ok(TokenBox::Ref(&DEF_KEYWORD)),
+            "type" => Ok(TokenBox::Ref(&TYPE_KEYWORD)),
+            "var" => Ok(TokenBox::Ref(&VAR_KEYWORD)),
+            "expr" => Ok(TokenBox::Ref(&FUNC_KEYWORD)),
+            "if" => Ok(TokenBox::Ref(&IF_KEYWORD)),
+            "else" => Ok(TokenBox::Ref(&ELSE_KEYWORD)),
+            "while" => Ok(TokenBox::Ref(&WHILE_KEYWORD)),
+            "self" => Ok(TokenBox::Ref(&SELF_KEYWORD)),
             _ => Err(NoneError.into()),
         }
     }

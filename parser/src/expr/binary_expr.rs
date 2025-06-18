@@ -1,5 +1,5 @@
 use stream::peeker::Peeker;
-use token::{operator::Operator, ComplexBox, TokenBox};
+use token::{operator::Operator, TokenBox};
 
 use crate::expr::expr::Expr;
 use error::Result;
@@ -7,14 +7,14 @@ use error::Result;
 #[derive(Debug)]
 pub struct BinaryExpr {
     pub left: Box<Expr>,
-    pub operator: ComplexBox<Operator>,
+    pub operator: TokenBox<Operator>,
     pub right: Box<Expr>,
 }
 
 impl BinaryExpr {
     pub fn parse(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
         let mut factors = Vec::new();
-        let mut operators: Vec<ComplexBox<Operator>> = Vec::new();
+        let mut operators: Vec<TokenBox<Operator>> = Vec::new();
 
         factors.push(Expr::parse_postfix(peeker)?);
 
