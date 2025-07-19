@@ -12,8 +12,8 @@ impl ObjectTrait for Closure {}
 
 impl ObjectTraitExt for Closure {
     const CALLABLE: bool = true;
-    fn call(&mut self, input: Object) -> Object {
-        let mut closure = self.clone();
+    fn call(this: Object<Self>, input: Object) -> Object {
+        let mut closure = (**this).clone();
         closure.context.push(input);
         if closure.context.len() == closure.times {
             closure.func.call(Tuple::new(closure.context))

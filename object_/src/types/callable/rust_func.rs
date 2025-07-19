@@ -9,8 +9,8 @@ impl ObjectTrait for RustFunc {}
 
 impl ObjectTraitExt for RustFunc {
     const CALLABLE: bool = true;
-    fn call(&mut self, input: Object) -> Object {
-        (self.value)(input)
+    fn call(this: Object<Self>, input: Object) -> Object {
+        (this.value)(input)
     }
 }
 

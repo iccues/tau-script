@@ -1,8 +1,10 @@
 use std::{any::Any, fmt::Debug};
 
-use crate::object::{object::{Object, ObjectInner}, object_vtable::ObjectVTable};
+use crate::{object::{object::{Object, ObjectInner}, object_vtable::ObjectVTable}, tools::on_matched};
 
 pub trait ObjectTrait: Any + Debug {}
+
+impl ObjectTrait for () {}
 
 pub trait ObjectTraitExt: ObjectTrait + Sized {
     const OBJECT_VTABLE: ObjectVTable<Self> = ObjectVTable {
@@ -12,9 +14,12 @@ pub trait ObjectTraitExt: ObjectTrait + Sized {
         } else {
             None
         },
+        match_fn: if Self::MATCHABLE {
+            Some(Self::match_)
+        } else {
+            None
+        },
     };
-
-    const CALLABLE: bool = false;
 
     fn get_object_type() -> Option<Object> {
         None
@@ -28,13 +33,27 @@ pub trait ObjectTraitExt: ObjectTrait + Sized {
         )
     }
 
-    fn get_member(&mut self, name: &str) -> Option<Object> {
+    fn get_member(_this: Object<Self>, name: &str) -> Option<Object> {
         _ = name;
         None
     }
 
-    fn call(&mut self, input: Object) -> Object {
+    const CALLABLE: bool = false;
+    fn call(this: Object<Self>, input: Object) -> Object {
+        _ = this;
         _ = input;
         unreachable!()
+    }
+
+    const MATCHABLE: bool = false;
+    fn match_(this: Object<Self>, input: Object) -> Option<Object> {
+        dbg!(&this, &input);
+        let input = on_matched(input, this.clone());
+        dbg!(&input);
+        if input.get_object_type()?.inner_type_id() == this.inner_type_id() {
+            Some(input)
+        } else {
+            None
+        }
     }
 }
