@@ -1,6 +1,6 @@
+use crate::matches_;
 use crate::object::prelude::*;
-use crate::tools::match_downcast;
-use crate::types::{callable::{closure::Closure, rust_func::RustFunc}, tuple::Tuple};
+use crate::types::callable::{closure::Closure, rust_func::RustFunc};
 
 #[derive(Debug)]
 struct IntegerType;
@@ -43,17 +43,7 @@ impl Integer {
     }
 
     fn add(input: Object) -> Object {
-        let input: Object<Tuple> = match_downcast(input).unwrap();
-        let [a, b] = input.as_slice() else {
-            panic!()
-        };
-        let a: Object<Integer> = match_downcast(a.clone()).unwrap();
-        let b: Object<Tuple> = match_downcast(b.clone()).unwrap();
-        let [b] = b.as_slice() else {
-            panic!()
-        };
-        let b: Object<Integer> = match_downcast(b.clone()).unwrap();
-
+        matches_!((a: Integer, (b: Integer)) = input);
         Integer::new(a.value + b.value)
     }
 }

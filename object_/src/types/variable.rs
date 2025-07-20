@@ -1,8 +1,9 @@
 use std::cell::RefCell;
 
+use crate::matches_;
 use crate::object::prelude::*;
 use crate::tools::on_matched;
-use crate::{tuple, types::{callable::{closure::Closure, rust_func::RustFunc}, tuple::Tuple, undefined::Undefined}};
+use crate::{tuple, types::{callable::{closure::Closure, rust_func::RustFunc}, undefined::Undefined}};
 
 #[derive(Debug)]
 struct VariableType;
@@ -66,15 +67,7 @@ impl Variable {
     }
 
     fn set(input: Object) -> Object {
-        let input = input.downcast::<Tuple>().unwrap();
-        let [a, b] = input.as_slice() else {
-            panic!()
-        };
-        let a: Object<Variable> = a.downcast().unwrap();
-        let b: Object<Tuple> = b.downcast().unwrap();
-        let [b] = b.as_slice() else {
-            panic!()
-        };
+        matches_!((a: Variable, (b)) = input);
 
         *a.value.borrow_mut() = b.clone();
 
@@ -82,15 +75,8 @@ impl Variable {
     }
 
     fn on_matched(input: Object) -> Object {
-        let input = input.downcast::<Tuple>().unwrap();
-        let [a, b] = input.as_slice() else {
-            panic!()
-        };
+        matches_!((a, (b)) = input);
         let a: Object<Variable> = a.downcast().unwrap();
-        let b: Object<Tuple> = b.downcast().unwrap();
-        let [b] = b.as_slice() else {
-            panic!()
-        };
 
         if b.is::<VariableType>() {
             a

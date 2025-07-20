@@ -1,4 +1,4 @@
-use crate::{object::prelude::{Object, ObjectTraitExt}, tuple};
+use crate::{object::prelude::*, tuple};
 
 pub fn on_matched(value: Object, model: Object) -> Object {
     if let Some(on_matched_fn) = value.get_member("on_matched") {
@@ -20,9 +20,43 @@ pub fn match_downcast<T: ObjectTraitExt>(mut value: Object) -> Option<Object<T>>
     value.downcast::<T>()
 }
 
+#[macro_export]
+macro_rules! matches_ {
+    ( $front:tt $( : $type_:ty )? = $value:expr ) => {
+        let $crate::matches_front!($front) = $crate::matches_back!($front $( : $type_ )?, $value);
+    }
+}
 
-// macro_rules! matches {
-//     () => {
-        
-//     };
-// }
+#[macro_export]
+macro_rules! matches_front {
+    ($id:ident $( : $type_:ty )? ) => {
+        $id
+    };
+    (( $( $elements:tt $( : $type_:ty )? ),* $(,)? )) => {
+        ( $( $crate::matches_front!( $elements $( : $type_ )? ) ),* , )
+    };
+}
+
+#[macro_export]
+macro_rules! matches_back {
+    ($id:ident, $value:expr) => {
+        $value
+    };
+    ($id:ident : $type_:ty, $value:expr) => {
+        $crate::tools::match_downcast::<$type_>($value).unwrap()
+    };
+    (( $( $elements:tt $( : $type_:ty )? ),* $(,)? ), $value:expr) => {
+        {
+            let mut elements = $crate::tools::match_downcast::<$crate::types::tuple::Tuple>($value).unwrap().get_vec().into_iter();
+            let tuple = (
+                $(
+                    $crate::matches_back!($elements  $( : $type_ )?, elements.next().unwrap()),
+                )*
+            );
+            if elements.next().is_some() {
+                panic!("Too many elements in tuple");
+            }
+            tuple
+        }
+    };
+}

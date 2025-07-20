@@ -19,6 +19,14 @@ impl Tuple {
     pub fn as_slice(&self) -> &[Object] {
         &self.elements
     }
+
+    pub fn try_get<const N: usize>(&self) -> Option<[Object; N]> {
+        self.elements.clone().try_into().ok()
+    }
+
+    pub fn get_vec(&self) -> Vec<Object> {
+        self.elements.clone()
+    }
 }
 
 #[macro_export]
