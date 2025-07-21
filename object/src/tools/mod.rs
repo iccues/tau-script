@@ -10,7 +10,6 @@ pub fn on_matched(value: Object, model: Object) -> Object {
 
 pub fn match_downcast<T: ObjectTraitExt>(mut value: Object) -> Option<Object<T>> {
     if let Some(model) = T::get_object_type() {
-        dbg!(&model, &value);
         if let Some(match_fn) = model.try_match() {
             value = match_fn(value)?;
         } else {
@@ -33,7 +32,7 @@ macro_rules! matches_front {
         $id
     };
     (( $( $elements:tt $( : $type_:ty )? ),* $(,)? )) => {
-        ( $( $crate::matches_front!( $elements $( : $type_ )? ) ),* , )
+        ( $( $crate::matches_front!( $elements $( : $type_ )? ) , )* )
     };
 }
 

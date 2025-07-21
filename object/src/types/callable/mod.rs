@@ -1,2 +1,2 @@
-pub mod func;
+pub mod rust_func;
 pub mod closure;

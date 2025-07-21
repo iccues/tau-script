@@ -1,7 +1,9 @@
-use object::{object::object::Object, tuple, types::{control::undefined::Undefined, primitive::{bool::Bool, number::Integer, string::String_}}};
+use object::object::prelude::*;
+use object::tools::match_downcast;
+use object::{tuple, types::{unit::undefined::Undefined, primitive::{bool::ObjBool, numbers::ObjI64, string::ObjString}}};
 use parser::stmt::Stmt;
 use token::operator::Operator;
-use object::types::compound::tuple::Tuple;
+use object::types::tuple::Tuple;
 use parser::expr::expr::Expr;
 use parser::expr::factor::literal::Literal;
 
@@ -19,23 +21,23 @@ impl Exec for Expr {
             }
             Expr::Dot(expr) => {
                 let left = expr.left.exec(env);
-                left.get_member(&*expr.right)
+                left.get_member(&*expr.right).unwrap()
             }
             Expr::Binary(expr) => {
                 let left = expr.left.exec(env);
                 let right = expr.right.exec(env);
                 match &*expr.operator {
                     Operator::Plus => {
-                        left.get_member("add").call(tuple!(right))
+                        left.get_member("add").unwrap().call(tuple!(right))
                     }
                     Operator::Eq => {
-                        left.get_member("set").call(tuple!(right))
+                        left.get_member("set").unwrap().call(tuple!(right))
                     }
                     Operator::NotEq => {
-                        left.get_member("ne").call(tuple!(right))
+                        left.get_member("ne").unwrap().call(tuple!(right))
                     }
                     Operator::DoubleEq => {
-                        left.get_member("eq").call(tuple!(right))
+                        left.get_member("eq").unwrap().call(tuple!(right))
                     }
                     _ => unimplemented!(),
                 }
@@ -44,7 +46,7 @@ impl Exec for Expr {
                 literal.exec(env)
             }
             Expr::Identifier(identifier) => {
-                env.get_member(identifier)
+                env.get_member(identifier).unwrap()
             }
             Expr::Tuple(exprs) => {
                 let mut args = Vec::new();
@@ -55,15 +57,15 @@ impl Exec for Expr {
             }
             Expr::If(expr) => {
                 let condition = expr.condition.exec(env);
-                if condition.get_data_match::<Bool>().is_some_and(|b| b.value) {
+                if match_downcast::<ObjBool>(condition).is_some_and(|b| b.value) {
                     expr.then_block.exec(env)
                 } else {
                     expr.else_block.as_ref().map(|block| block.exec(env)).unwrap_or_else(|| Undefined::new())
                 }
             }
             Expr::While(expr) => {
-                let mut result = Undefined::new();
-                while expr.condition.exec(env).get_data_match::<Bool>().is_some_and(|b| b.value) {
+                let mut result: Object = Undefined::new();
+                while match_downcast::<ObjBool>(expr.condition.exec(env)).is_some_and(|b| b.value) {
                     result = expr.then_block.exec(env);
                 }
                 result
@@ -86,10 +88,10 @@ impl Exec for Literal {
     fn exec(&self, _env: &Object) -> Object {
         match self {
             Literal::String(literal) => {
-                String_::new(literal.clone())
+                ObjString::new(literal.clone())
             }
             Literal::Integer(literal) => {
-                Integer::new(literal.parse().unwrap())
+                ObjI64::new(literal.parse().unwrap())
             }
             _ => unimplemented!(),
         }

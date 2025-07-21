@@ -1,87 +1,102 @@
-use std::mem::transmute;
+use std::ops::{Deref, DerefMut};
+use std::{mem::transmute, rc::Rc};
+use crate::object::{object_trait::ObjectTrait, object_vtable::ObjectVTable};
 
-use super::{obj_type::ObjType, object_trait::ObjectTrait};
+pub type Object<T = dyn ObjectTrait> = Rc<ObjectInner<T>>;
 
-#[derive(Clone)]
-pub struct Object {
-    pub data: *mut (),
-    pub obj_type: *mut Object,
+#[derive(Debug)]
+pub struct ObjectInner<T: ObjectTrait + ?Sized = dyn ObjectTrait> {
+    object_type: Option<Object>,
+    object_vtable: ObjectVTable<()>,
+    object: T,
 }
 
-unsafe impl Sync for Object {}
-unsafe impl Send for Object {}
-
-impl Object {
-    pub fn new<T: ObjectTrait>(data: T, obj_type: &Object) -> Self {
-        Object::from_raw(Box::into_raw(Box::new(data)), obj_type)
+impl<T: ObjectTrait> ObjectInner<T> {
+    pub fn new(object: T, object_vtable: ObjectVTable<T>, object_type: Option<Object>) -> Object<T> {
+        Rc::new(ObjectInner {
+            object_type,
+            object_vtable: unsafe { transmute(object_vtable) },
+            object,
+        })
     }
 
-    pub const fn from_raw<T: ObjectTrait>(data: *const T, obj_type: &Object) -> Self {
-        Object {
-            data: data as *mut (),
-            obj_type: obj_type as *const Object as *mut Object,
-        }
+    pub fn get_member(self: &Rc<Self>, name: &str) -> Option<Object> {
+        (self.clone() as Object).get_member(name)
+    }
+}
+
+impl<T: ObjectTrait + ?Sized> ObjectInner<T> {
+    pub fn call(self: &Rc<Self>, input: Object) -> Object {
+        (self.object_vtable.call_fn.unwrap())(self.get_object_row(), input)
     }
 
-    pub unsafe fn get_data_uncheck<T: ObjectTrait>(&self) -> &mut T {
-        unsafe { &mut *(self.data as *mut T) }
-    }
-
-    pub fn get_data<T: ObjectTrait>(&self) -> Option<&mut T> {
-        if *self.get_obj_type() == T::OBJ_TYPE {
-            Some(unsafe { self.get_data_uncheck::<T>() })
+    pub fn try_call(self: &Rc<Self>) -> Option<Box<dyn Fn(Object) -> Object>> {
+        let self_ = self.clone();
+        if let Some(call_fn) = self.object_vtable.call_fn {
+            Some(Box::new(move |input| call_fn(self_.get_object_row(), input)))
         } else {
             None
         }
     }
 
-    pub fn get_data_match<T: ObjectTrait>(&self) -> Option<&mut T> {
-        if let Some(data) = (T::OBJ_TYPE_BOX.get_obj_type().match_)(T::OBJ_TYPE_BOX, self.clone()) {
-            Some(unsafe { transmute::<&mut T, &mut T>(data.get_data_uncheck::<T>()) })
+    pub fn match_(self: &Rc<Self>, input: Object) -> Option<Object> {
+        self.object_vtable.match_fn?(self.get_object_row(), input)
+    }
+
+    pub fn try_match(self: &Rc<Self>) -> Option<Box<dyn Fn(Object) -> Option<Object>>> {
+        if let Some(match_fn) = self.object_vtable.match_fn {
+            let self_ = self.clone();
+            Some(Box::new(move |input| match_fn(self_.get_object_row(), input)))
         } else {
             None
         }
     }
 
-    pub fn get_obj_type(&self) -> &ObjType {
-        unsafe { (*self.obj_type).get_data_uncheck::<ObjType>() }
+    pub fn get_object_type(self: &Rc<Self>) -> Option<Object> {
+        self.object_type.clone()
     }
 
-    pub fn get_member(&self, name: &str) -> Object {
-        (self.get_obj_type().get_member)(self.clone(), name)
+    pub fn is<U: ObjectTrait>(&self) -> bool {
+        self.object.type_id() == std::any::TypeId::of::<U>()
     }
 
-    pub fn call(&self, input: Object) -> Object {
-        (self.get_obj_type().call)(self.clone(), input)
+    fn get_object_row(self: &Rc<Self>) -> Object<()> {
+        #[allow(invalid_reference_casting)]
+        unsafe { Rc::from_raw(Rc::into_raw(self.clone()) as *mut ObjectInner<()>) }
     }
 
-    pub fn match_(&self, other: Object) -> Option<Object> {
-        (self.get_obj_type().match_)(self.clone(), other)
-    }
-
-    pub fn on_matched(&self, other: Object) -> Object {
-        (self.get_obj_type().on_matched)(self.clone(), other)
-    }
-
-    pub fn drop(&mut self) {
-        if self.data.is_null() {
-            return;
-        }
-        (self.get_obj_type().drop)(self.clone());
-        unsafe {
-            let _ = Box::from_raw(self.data);
-        };
-        self.data = std::ptr::null_mut();
+    pub fn inner_type_id(&self) -> std::any::TypeId {
+        self.object.type_id()
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::types::primitive::number::Integer;
+impl ObjectInner<dyn ObjectTrait> {
+    pub fn downcast<T: ObjectTrait>(self: &Rc<Self>) -> Option<Object<T>> {
+        if self.is::<T>() {
+            Some(unsafe {
+                Rc::from_raw(Rc::into_raw(self.clone()) as *mut ObjectInner<T>)
+            })
+        } else {
+            None
+        }
+    }
 
-    #[test]
-    fn test_drop() {
-        let mut obj = Integer::new(42);
-        obj.drop();
+    pub fn get_member(self: &Rc<Self>, name: &str) -> Option<Object> {
+        (self.object_vtable.get_member_fn)(self.get_object_row(), name)
+            .or_else(|| self.object_type.as_ref()?.get_member(name).map(|m|
+                m.call(self.clone())))
+    }
+}
+
+impl<T: ObjectTrait> Deref for ObjectInner<T> {
+    type Target = T;
+    fn deref(&self) -> &Self::Target {
+        &self.object
+    }
+}
+
+impl<T: ObjectTrait> DerefMut for ObjectInner<T> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.object
     }
 }

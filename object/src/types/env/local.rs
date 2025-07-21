@@ -1,47 +1,30 @@
-use std::collections::HashMap;
+use std::{cell::RefCell, collections::HashMap};
 
-use crate::object::{object::Object, object_trait::ObjectTrait};
+use crate::{object::prelude::*, types::variable::Variable};
 
-use crate::types::control::undefined::Undefined;
-use crate::types::variable::variable::Variable;
-
-pub struct Local {
-    map: HashMap<String, Object>,
-    outers: Vec<Object>,
+#[derive(Debug)]
+pub struct ObjLocal {
+    map: RefCell<HashMap<String, Object>>,
 }
 
-impl ObjectTrait for Local {
-    fn get_member_fn(this: Object, name: &str) -> Object {
-        let local = this.get_data::<Local>().unwrap();
-        if let Some(ret) = local.map.get(name) {
-            ret.clone()
-        } else {
-            for outer in local.outers.iter() {
-                let ret = outer.get_member(name);
-                if Undefined::OBJ_TYPE_BOX.match_(ret.clone()).is_none() {
-                    return ret;
-                }
-            }
+impl ObjectTrait for ObjLocal {}
 
+impl ObjectTraitExt for ObjLocal {
+    fn get_member(this: Object<Self>, name: &str) -> Option<Object> {
+        if let Some(ret) = this.map.borrow().get(name) {
+            Some(ret.clone())
+        } else {
             let var = Variable::new();
-            local.map.insert(name.to_string(), var.clone());
-            var
+            this.map.borrow_mut().insert(name.to_string(), var.clone());
+            Some(var)
         }
     }
 }
 
-impl Local {
-    pub fn new() -> Object {
-        Self::from_data(Local {
-            map: HashMap::new(),
-            outers: Vec::new(),
-        })
-    }
-
-    pub fn from_outer(outers: Vec<Object>) -> Object {
-        Self::from_data(Local {
-            map: HashMap::new(),
-            outers,
+impl ObjLocal {
+    pub fn new() -> Object<Self> {
+        Self::from_data(Self {
+            map: RefCell::new(HashMap::new()),
         })
     }
 }

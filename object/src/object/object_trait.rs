@@ -1,50 +1,57 @@
-use std::ptr::drop_in_place;
+use std::{any::Any, fmt::Debug};
 
-use crate::types::error::error::Error;
+use crate::{object::{object::{Object, ObjectInner}, object_vtable::ObjectVTable}, tools::on_matched};
 
-use super::{obj_type::{ObjType, OBJ_TYPE_BOX}, object::Object};
+pub trait ObjectTrait: Any + Debug {}
 
-pub trait ObjectTrait: Sized {
-    const OBJ_TYPE: ObjType = ObjType {
-        call: Self::call_fn,
-        get_member: Self::get_member_fn,
-        match_: Self::match_fn,
-        on_matched: Self::on_matched_fn,
-        drop: Self::drop_fn,
+impl ObjectTrait for () {}
+
+pub trait ObjectTraitExt: ObjectTrait + Sized {
+    const OBJECT_VTABLE: ObjectVTable<Self> = ObjectVTable {
+        get_member_fn: Self::get_member,
+        call_fn: if Self::CALLABLE {
+            Some(Self::call)
+        } else {
+            None
+        },
+        match_fn: if Self::MATCHABLE {
+            Some(Self::match_)
+        } else {
+            None
+        },
     };
-    const OBJ_TYPE_TYPE: &Object = &OBJ_TYPE_BOX;
 
-    const OBJ_TYPE_BOX: Object = Object::from_raw(&Self::OBJ_TYPE, Self::OBJ_TYPE_TYPE);
+    fn get_object_type() -> Option<Object> {
+        None
+    }
 
-    fn get_member_fn(this: Object, name: &str) -> Object {
-        let _ = (this, name);
-        Error::new("get_member not implemented")
+    fn from_data(self) -> Object<Self> {
+        ObjectInner::new(
+            self,
+            Self::OBJECT_VTABLE,
+            Self::get_object_type(),
+        )
     }
-    fn call_fn(this: Object, args: Object) -> Object {
-        let _ = (this, args);
-        Error::new("call not implemented")
+
+    fn get_member(_this: Object<Self>, name: &str) -> Option<Object> {
+        _ = name;
+        None
     }
-    fn match_fn(this: Object, other: Object) -> Option<Object> {
-        let this_type = unsafe { this.get_data_uncheck::<ObjType>() };
-        let other_matched = other.on_matched(this.clone());
-        if this_type == other_matched.get_obj_type() {
-            Some(other_matched.clone())
+
+    const CALLABLE: bool = false;
+    fn call(this: Object<Self>, input: Object) -> Object {
+        _ = this;
+        _ = input;
+        unreachable!()
+    }
+
+    const MATCHABLE: bool = false;
+    fn match_(this: Object<Self>, input: Object) -> Option<Object> {
+        let input = on_matched(input, this.clone());
+        if input.get_object_type()?.inner_type_id() == this.inner_type_id() {
+            Some(input)
         } else {
             None
         }
-    }
-    fn on_matched_fn(this: Object, other: Object) -> Object {
-        let _ = other;
-        this
-    }
-    fn drop_fn(this: Object) {
-        let this = this.get_data::<Self>().unwrap();
-        unsafe {
-            drop_in_place(this);
-        }
-    }
-
-    fn from_data(data: Self) -> Object {
-        Object::new(data, &Self::OBJ_TYPE_BOX)
     }
 }

@@ -3,7 +3,7 @@ use std::cell::RefCell;
 use crate::matches_;
 use crate::object::prelude::*;
 use crate::tools::on_matched;
-use crate::{tuple, types::{callable::{closure::Closure, rust_func::RustFunc}, undefined::Undefined}};
+use crate::{tuple, types::{callable::{closure::Closure, rust_func::RustFunc}, unit::undefined::Undefined}};
 
 #[derive(Debug)]
 struct VariableType;
@@ -89,38 +89,38 @@ impl Variable {
 
 #[cfg(test)]
 mod tests {
-    use crate::{tools::match_downcast, types::numbers::Integer};
-
+    use crate::tools::match_downcast;
+    use crate::types::primitive::numbers::ObjI64;
     use super::*;
 
     #[test]
     fn test_variable_set() {
         let a = Variable::new();
-        let b = Integer::new(42);
+        let b = ObjI64::new(42);
         a.get_member("set").unwrap().call(tuple!(b));
-        assert_eq!(a.value.borrow().downcast::<Integer>().unwrap().get_value(), 42);
+        assert_eq!(a.value.borrow().downcast::<ObjI64>().unwrap().value, 42);
     }
 
     #[test]
     fn test_variable_on_matched() {
-        let a = Variable::from(Integer::new(42));
-        let b: Object<Integer> = match_downcast(a.clone()).unwrap();
-        assert_eq!(b.get_value(), 42);
+        let a = Variable::from(ObjI64::new(42));
+        let b: Object<ObjI64> = match_downcast(a.clone()).unwrap();
+        assert_eq!(b.value, 42);
     }
 
     #[test]
     fn test_variable_on_matched2() {
-        let a: Object = Integer::new(20);
-        let b: Object = Variable::from(Integer::new(22));
+        let a: Object = ObjI64::new(20);
+        let b: Object = Variable::from(ObjI64::new(22));
         let c = a.get_member("add").unwrap().call(tuple!(b));
-        assert_eq!(c.downcast::<Integer>().unwrap().get_value(), 42)
+        assert_eq!(c.downcast::<ObjI64>().unwrap().value, 42)
     }
 
     #[test]
     fn test_variable_get_member() {
-        let a = Variable::from(Integer::new(20));
-        let b = Integer::new(22);
+        let a = Variable::from(ObjI64::new(20));
+        let b = ObjI64::new(22);
         let c = a.get_member("add").unwrap().call(tuple!(b));
-        assert_eq!(c.downcast::<Integer>().unwrap().get_value(), 42);
+        assert_eq!(c.downcast::<ObjI64>().unwrap().value, 42);
     }
 }

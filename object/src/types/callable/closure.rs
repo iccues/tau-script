@@ -1,54 +1,34 @@
-use crate::object::{object::Object, object_trait::ObjectTrait};
-use crate::types::callable::func::Func;
-use crate::types::compound::tuple::Tuple;
+use crate::object::prelude::*;
+use crate::types::tuple::Tuple;
 
+#[derive(Debug, Clone)]
 pub struct Closure {
     func: Object,
-    context: Vec<Option<Object>>,
+    context: Vec<Object>,
+    times: usize,
 }
 
-impl ObjectTrait for Closure {
-    fn call_fn(this: Object, args: Object) -> Object {
-        let this = this.get_data::<Closure>().unwrap();
-        let args = args.get_data_match::<Tuple>().unwrap();
+impl ObjectTrait for Closure {}
 
-        let args = this.curry(args.as_slice()).unwrap();
-        this.func.call(Tuple::new(args))
+impl ObjectTraitExt for Closure {
+    const CALLABLE: bool = true;
+    fn call(this: Object<Self>, input: Object) -> Object {
+        let mut closure = (**this).clone();
+        closure.context.push(input);
+        if closure.context.len() == closure.times {
+            closure.func.call(Tuple::new(closure.context))
+        } else {
+            closure.from_data()
+        }
     }
 }
 
 impl Closure {
-    pub fn new(func: Object, context: Vec<Option<Object>>) -> Object {
-        Self::from_data(Closure { func, context })
-    }
-    
-    pub fn new_first<F>(func: F, first: Object) -> Object
-    where
-        F: Fn(Object) -> Object + 'static,
-    {
-        Self::new(
-            Func::new(func),
-            vec![Some(first)]
-        )
-    }
-
-    fn curry(&self, args: &[Object]) -> Option<Vec<Object>> {
-        let mut context = self.context.clone();
-        let mut i = 0;
-
-        for arg in args {
-            while i < self.context.len() && self.context[i].is_some() {
-                i += 1;
-            }
-
-            if i < self.context.len() {
-                context[i] = Some(arg.clone());
-            } else {
-                context.push(Some(arg.clone()));
-            }
-            i += 1;
-        }
-
-        context.into_iter().collect()
+    pub fn new(func: Object, times: usize) -> Object<Closure> {
+        Closure {
+            func,
+            context: vec![],
+            times,
+        }.from_data()
     }
 }

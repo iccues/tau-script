@@ -1,30 +1,59 @@
-use crate::tuple_match;
-use crate::{object::{object::Object, object_trait::ObjectTrait}, types::{callable::closure::Closure, error::error::Error}};
+use crate::{matches_, object::prelude::{Object, ObjectTrait, ObjectTraitExt}, types::{callable::{closure::Closure, rust_func::RustFunc}, primitive::string::ObjString}};
 
-use super::string::String_;
+#[derive(Debug)]
+struct ObjBoolType;
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct Bool {
+impl ObjectTrait for ObjBoolType {}
+
+impl ObjectTraitExt for ObjBoolType {
+    fn get_member(_this: Object<Self>, name: &str) -> Option<Object> {
+        match name {
+            "to_string" => Some(Closure::new(RustFunc::new(ObjBool::to_string), 2)),
+            _ => None,
+        }
+    }
+
+    const MATCHABLE: bool = true;
+}
+
+#[derive(Debug)]
+pub struct ObjBool {
     pub value: bool,
 }
 
-impl ObjectTrait for Bool {
-    fn get_member_fn(this: Object, name: &str) -> Object {
-        match name {
-            "to_string" => Closure::new_first(Bool::to_string, this),
-            _ => Error::new("get_member not implemented"),
-        }
+impl ObjectTrait for ObjBool {}
+
+impl ObjectTraitExt for ObjBool {
+    fn get_object_type() -> Option<Object> {
+        Some(ObjBoolType.from_data())
     }
 }
 
-impl Bool {
-    pub fn new(value: bool) -> Object {
-        Self::from_data(Bool { value })
+impl ObjBool {
+    pub fn new(value: bool) -> Object<ObjBool> {
+        ObjBool { value }.from_data()
     }
 
-    fn to_string(input: Object) -> Object {
-        tuple_match!(input, (a: Bool) {
-            String_::new(a.value.to_string())
-        })
+    fn to_string(input: Object) -> Object{
+        matches_!((a: ObjBool, ()) = input);
+        ObjString::new(a.value.to_string())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::tuple;
+
+    use super::*;
+
+    #[test]
+    fn test_bool_to_string() {
+        let a: Object = ObjBool::new(true);
+        let c = a.get_member("to_string").unwrap().call(tuple!());
+        assert_eq!(c.downcast::<ObjString>().unwrap().value, "true");
+
+        let b: Object = ObjBool::new(false);
+        let d = b.get_member("to_string").unwrap().call(tuple!());
+        assert_eq!(d.downcast::<ObjString>().unwrap().value, "false");
     }
 }

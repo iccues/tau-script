@@ -22,6 +22,5 @@ members = [
     "lexer",
     "parser",
     "object",
-    "object_",
     "executor",
 ]
