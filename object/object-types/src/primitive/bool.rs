@@ -1,4 +1,7 @@
-use crate::{matches_, object::prelude::{Object, ObjectTrait, ObjectTraitExt}, types::{callable::{closure::Closure, rust_func::RustFunc}, primitive::string::ObjString}};
+use object_core::prelude::*;
+use object_ext::object_trait_ext::ObjectTraitExt;
+use object_ext::matches_;
+use crate::{callable::{closure::Closure, rust_func::RustFunc}, primitive::string::ObjString};
 
 #[derive(Debug)]
 struct ObjBoolType;
@@ -42,7 +45,7 @@ impl ObjBool {
 
 #[cfg(test)]
 mod tests {
-    use crate::tuple;
+    use object_ext::tuple;
 
     use super::*;
 

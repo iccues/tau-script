@@ -28,6 +28,30 @@ dependencies = [
 [[package]]
 name = "object"
 version = "0.1.0"
+dependencies = [
+ "object-core",
+ "object-ext",
+ "object-types",
+]
+
+[[package]]
+name = "object-core"
+version = "0.1.0"
+
+[[package]]
+name = "object-ext"
+version = "0.1.0"
+dependencies = [
+ "object-core",
+]
+
+[[package]]
+name = "object-types"
+version = "0.1.0"
+dependencies = [
+ "object-core",
+ "object-ext",
+]
 
 [[package]]
 name = "parser"

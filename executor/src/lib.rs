@@ -2,8 +2,8 @@ pub mod exec;
 
 use std::io::{Read, Write};
 
-use object::object::prelude::*;
-use object::tuple;
+use object::core::prelude::*;
+use object::ext::tuple;
 use object::types::primitive::string::ObjString;
 use parser::parse_stmt;
 use exec::Exec;

@@ -1,4 +1,7 @@
-use crate::{matches_, object::prelude::*, types::callable::{closure::Closure, rust_func::RustFunc}};
+use object_core::prelude::*;
+use object_ext::object_trait_ext::ObjectTraitExt;
+use object_ext::matches_;
+use crate::callable::{closure::Closure, rust_func::RustFunc};
 
 #[derive(Debug)]
 struct ObjStringType;
@@ -42,7 +45,7 @@ impl ObjString {
 
 #[cfg(test)]
 mod tests {
-    use crate::tuple;
+    use object_ext::tuple;
 
     use super::*;
 

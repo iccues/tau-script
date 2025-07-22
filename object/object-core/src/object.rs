@@ -1,6 +1,7 @@
 use std::ops::{Deref, DerefMut};
 use std::{mem::transmute, rc::Rc};
-use crate::object::{object_trait::ObjectTrait, object_vtable::ObjectVTable};
+
+use crate::prelude::*;
 
 pub type Object<T = dyn ObjectTrait> = Rc<ObjectInner<T>>;
 
@@ -61,7 +62,6 @@ impl<T: ObjectTrait + ?Sized> ObjectInner<T> {
     }
 
     fn get_object_row(self: &Rc<Self>) -> Object<()> {
-        #[allow(invalid_reference_casting)]
         unsafe { Rc::from_raw(Rc::into_raw(self.clone()) as *mut ObjectInner<()>) }
     }
 

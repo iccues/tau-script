@@ -1,6 +1,8 @@
 use std::{cell::RefCell, collections::HashMap};
 
-use crate::{object::prelude::*, types::variable::Variable};
+use object_core::prelude::*;
+use object_ext::object_trait_ext::ObjectTraitExt;
+use crate::variable::Variable;
 
 #[derive(Debug)]
 pub struct ObjLocal {

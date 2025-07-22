@@ -1,8 +1,9 @@
-use crate::matches_;
-use crate::object::prelude::*;
-use crate::types::callable::{closure::Closure, rust_func::RustFunc};
-use crate::types::primitive::bool::ObjBool;
-use crate::types::primitive::string::ObjString;
+use object_core::prelude::*;
+use object_ext::object_trait_ext::ObjectTraitExt;
+use object_ext::matches_;
+use crate::callable::{closure::Closure, rust_func::RustFunc};
+use crate::primitive::bool::ObjBool;
+use crate::primitive::string::ObjString;
 
 #[derive(Debug)]
 struct ObjI64Type;
@@ -65,7 +66,7 @@ impl ObjI64 {
 
 #[cfg(test)]
 mod tests {
-    use crate::tuple;
+    use object_ext::tuple;
 
     use super::*;
 

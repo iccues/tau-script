@@ -21,6 +21,11 @@ members = [
 
     "lexer",
     "parser",
-    "object",
+
     "executor",
+
+    "object",
+    "object/object-core",
+    "object/object-ext",
+    "object/object-types",
 ]

@@ -1,24 +1,3 @@
-use crate::{object::prelude::*, tuple};
-
-pub fn on_matched(value: Object, model: Object) -> Object {
-    if let Some(on_matched_fn) = value.get_member("on_matched") {
-        on_matched_fn.call(tuple!(model.clone()))
-    } else {
-        value.clone()
-    }
-}
-
-pub fn match_downcast<T: ObjectTraitExt>(mut value: Object) -> Option<Object<T>> {
-    if let Some(model) = T::get_object_type() {
-        if let Some(match_fn) = model.try_match() {
-            value = match_fn(value)?;
-        } else {
-            value = on_matched(value, model);
-        }
-    }
-    value.downcast::<T>()
-}
-
 #[macro_export]
 macro_rules! matches_ {
     ( $front:tt $( : $type_:ty )? = $value:expr ) => {
@@ -42,11 +21,15 @@ macro_rules! matches_back {
         $value
     };
     ($id:ident : $type_:ty, $value:expr) => {
-        $crate::tools::match_downcast::<$type_>($value).unwrap()
+        {
+            use $crate::object_ext::ObjectExt;
+            $value.match_downcast::<$type_>().unwrap()
+        }
     };
     (( $( $elements:tt $( : $type_:ty )? ),* $(,)? ), $value:expr) => {
         {
-            let mut elements = $crate::tools::match_downcast::<$crate::types::tuple::Tuple>($value).unwrap().get_vec().into_iter();
+            use $crate::object_ext::ObjectExt;
+            let mut elements = $value.match_downcast::<$crate::tuple::Tuple>().unwrap().get_vec().into_iter();
             let tuple = (
                 $(
                     $crate::matches_back!($elements  $( : $type_ )?, elements.next().unwrap()),

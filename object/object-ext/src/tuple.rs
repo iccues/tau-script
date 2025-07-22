@@ -1,4 +1,6 @@
-use crate::object::prelude::*;
+use object_core::prelude::*;
+
+use crate::object_trait_ext::ObjectTraitExt;
 
 #[derive(Debug)]
 pub struct Tuple {
@@ -32,6 +34,6 @@ impl Tuple {
 #[macro_export]
 macro_rules! tuple {
     ($($item:tt)*) => {
-        $crate::types::tuple::Tuple::new(vec![$($item)*])
+        $crate::tuple::Tuple::new(vec![$($item)*])
     };
 }

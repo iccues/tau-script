@@ -1,0 +1,8 @@
+[package]
+name = "object-types"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+object-core = { path = "../object-core" }
+object-ext = { path = "../object-ext" }

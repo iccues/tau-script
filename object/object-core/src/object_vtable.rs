@@ -1,4 +1,4 @@
-use crate::object::{object::Object, prelude::ObjectTrait};
+use crate::prelude::*;
 
 #[derive(Debug)]
 pub struct ObjectVTable<T: ObjectTrait> {

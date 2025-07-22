@@ -1,10 +1,6 @@
-use std::{any::Any, fmt::Debug};
+use object_core::prelude::*;
 
-use crate::{object::{object::{Object, ObjectInner}, object_vtable::ObjectVTable}, tools::on_matched};
-
-pub trait ObjectTrait: Any + Debug {}
-
-impl ObjectTrait for () {}
+use crate::object_ext::ObjectExt;
 
 pub trait ObjectTraitExt: ObjectTrait + Sized {
     const OBJECT_VTABLE: ObjectVTable<Self> = ObjectVTable {
@@ -47,7 +43,7 @@ pub trait ObjectTraitExt: ObjectTrait + Sized {
 
     const MATCHABLE: bool = false;
     fn match_(this: Object<Self>, input: Object) -> Option<Object> {
-        let input = on_matched(input, this.clone());
+        let input = input.on_matched(this.clone());
         if input.get_object_type()?.inner_type_id() == this.inner_type_id() {
             Some(input)
         } else {

@@ -1,5 +1,6 @@
-use crate::object::prelude::*;
-use crate::types::tuple::Tuple;
+use object_core::prelude::*;
+use object_ext::object_trait_ext::ObjectTraitExt;
+use object_ext::tuple::Tuple;
 
 #[derive(Debug, Clone)]
 pub struct Closure {

@@ -1,9 +1,10 @@
 use std::cell::RefCell;
 
-use crate::matches_;
-use crate::object::prelude::*;
-use crate::tools::on_matched;
-use crate::{tuple, types::{callable::{closure::Closure, rust_func::RustFunc}, unit::undefined::Undefined}};
+use object_core::prelude::*;
+use object_ext::object_ext::ObjectExt;
+use object_ext::object_trait_ext::ObjectTraitExt;
+use object_ext::{matches_, tuple};
+use crate::{callable::{closure::Closure, rust_func::RustFunc}, unit::undefined::Undefined};
 
 #[derive(Debug)]
 struct VariableType;
@@ -81,7 +82,7 @@ impl Variable {
         if b.is::<VariableType>() {
             a
         } else {
-            on_matched(a.value.borrow().clone(), b.clone())
+            a.value.borrow().clone().on_matched(b.clone())
         }
     }
 }
@@ -89,8 +90,9 @@ impl Variable {
 
 #[cfg(test)]
 mod tests {
-    use crate::tools::match_downcast;
-    use crate::types::primitive::numbers::ObjI64;
+    // use object_ext::tools::match_downcast;
+    use object_ext::object_ext::ObjectExt;
+    use crate::primitive::numbers::ObjI64;
     use super::*;
 
     #[test]
@@ -104,7 +106,7 @@ mod tests {
     #[test]
     fn test_variable_on_matched() {
         let a = Variable::from(ObjI64::new(42));
-        let b: Object<ObjI64> = match_downcast(a.clone()).unwrap();
+        let b: Object<ObjI64> = a.match_downcast().unwrap();
         assert_eq!(b.value, 42);
     }
 
