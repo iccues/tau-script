@@ -1,9 +1,10 @@
 use std::io::stdin;
 
-use lexer::get_lexer;
-use parser::parse_stmt;
+use frontend::lexer::get_lexer;
+use frontend::parser::parse_stmt;
 
 #[test]
+#[ignore]
 fn print_token() {
     let mut lexer = get_lexer(stdin());
     while let Ok(token) = lexer.next() {
@@ -12,6 +13,7 @@ fn print_token() {
 }
 
 #[test]
+#[ignore]
 fn print_ast() {
     let mut lexer = get_lexer(stdin());
     while let Ok(stmt) = parse_stmt(&mut lexer) {

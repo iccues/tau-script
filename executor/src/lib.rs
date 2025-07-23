@@ -1,33 +1,41 @@
 pub mod exec;
+pub mod error;
 
 use std::io::{Read, Write};
 
+use frontend::frontend_library::stream::peeker::Peeker;
+use frontend::frontend_library::token::TokenBox;
 use object::core::prelude::*;
 use object::ext::tuple;
 use object::types::primitive::string::ObjString;
-use parser::parse_stmt;
+use frontend::parser::parse_stmt;
 use exec::Exec;
 use object::types::env::local::ObjLocal;
 
+use crate::error::ExecutorResult;
+
 pub fn execute(input: impl Read + 'static, output: &mut impl Write) {
-    let mut lexer = lexer::get_lexer(input);
+    let mut lexer = frontend::lexer::get_lexer(input);
     let env: Object = ObjLocal::new();
 
     loop {
-        let stmt = parse_stmt(&mut lexer);
-        if let Ok(stmt) = stmt {
-            let ret = stmt.exec(&env);
-            print_object(ret, output);
-        } else {
-            println!("Error: {:?}", stmt.err().unwrap());
+        if let Err(err) = execute_stmt(&mut lexer, output, &env) {
+            println!("Error: {}", err);
             break;
         }
     }
 }
 
-fn print_object(object: Object, output: &mut impl Write) -> Option<()> {
-    let string = object.get_member("to_string")?.call(tuple!());
+fn execute_stmt(lexer: &mut Peeker<TokenBox>, output: &mut impl Write, env: &Object) -> ExecutorResult<()> {
+    let stmt = parse_stmt(lexer)?;
+    let result = stmt.exec(env)?;
+    _ = print_object(result, output);
+    Ok(())
+}
+
+fn print_object(object: Object, output: &mut impl Write) -> ExecutorResult<()> {
+    let string = object.get_member("to_string")?.try_call()?(tuple!());
     let string: Object<ObjString> = string.downcast()?;
-    writeln!(output, "{}", string.value).ok()?;
-    Some(())
+    writeln!(output, "{}", string.value)?;
+    Ok(())
 }

@@ -1,6 +1,8 @@
+use std::fmt::Display;
 use std::ops::{Deref, DerefMut};
 use std::{mem::transmute, rc::Rc};
 
+use crate::error::{ObjectError, ObjectResult};
 use crate::prelude::*;
 
 pub type Object<T = dyn ObjectTrait> = Rc<ObjectInner<T>>;
@@ -21,8 +23,16 @@ impl<T: ObjectTrait> ObjectInner<T> {
         })
     }
 
-    pub fn get_member(self: &Rc<Self>, name: &str) -> Option<Object> {
+    pub fn get_member(self: &Rc<Self>, name: &str) -> ObjectResult<Object> {
         (self.clone() as Object).get_member(name)
+    }
+
+    pub fn try_call(self: &Rc<Self>) -> ObjectResult<Box<dyn Fn(Object) -> Object>> {
+        (self.clone() as Object).try_call()
+    }
+
+    pub fn try_match(self: &Rc<Self>) -> ObjectResult<Box<dyn Fn(Object) -> ObjectResult<Object>>> {
+        (self.clone() as Object).try_match()
     }
 }
 
@@ -31,26 +41,8 @@ impl<T: ObjectTrait + ?Sized> ObjectInner<T> {
         (self.object_vtable.call_fn.unwrap())(self.get_object_row(), input)
     }
 
-    pub fn try_call(self: &Rc<Self>) -> Option<Box<dyn Fn(Object) -> Object>> {
-        let self_ = self.clone();
-        if let Some(call_fn) = self.object_vtable.call_fn {
-            Some(Box::new(move |input| call_fn(self_.get_object_row(), input)))
-        } else {
-            None
-        }
-    }
-
     pub fn match_(self: &Rc<Self>, input: Object) -> Option<Object> {
         self.object_vtable.match_fn?(self.get_object_row(), input)
-    }
-
-    pub fn try_match(self: &Rc<Self>) -> Option<Box<dyn Fn(Object) -> Option<Object>>> {
-        if let Some(match_fn) = self.object_vtable.match_fn {
-            let self_ = self.clone();
-            Some(Box::new(move |input| match_fn(self_.get_object_row(), input)))
-        } else {
-            None
-        }
     }
 
     pub fn get_object_type(self: &Rc<Self>) -> Option<Object> {
@@ -71,20 +63,47 @@ impl<T: ObjectTrait + ?Sized> ObjectInner<T> {
 }
 
 impl ObjectInner<dyn ObjectTrait> {
-    pub fn downcast<T: ObjectTrait>(self: &Rc<Self>) -> Option<Object<T>> {
+    pub fn downcast<T: ObjectTrait>(self: &Rc<Self>) -> ObjectResult<Object<T>> {
         if self.is::<T>() {
-            Some(unsafe {
+            Ok(unsafe {
                 Rc::from_raw(Rc::into_raw(self.clone()) as *mut ObjectInner<T>)
             })
         } else {
-            None
+            Err(ObjectError::DowncastFailed(
+                self.clone(),
+                std::any::TypeId::of::<T>(),
+            ))
         }
     }
 
-    pub fn get_member(self: &Rc<Self>, name: &str) -> Option<Object> {
-        (self.object_vtable.get_member_fn)(self.get_object_row(), name)
-            .or_else(|| self.object_type.as_ref()?.get_member(name).map(|m|
-                m.call(self.clone())))
+    pub fn get_member(self: &Rc<Self>, name: &str) -> ObjectResult<Object> {
+        if let Some(member) = (self.object_vtable.get_member_fn)(self.get_object_row(), name) {
+            Ok(member)
+        } else if let Some(object_type) = &self.object_type {
+            object_type.get_member(name).map(|m| m.call(self.clone()))
+        } else {
+            Err(ObjectError::MemberNotFound(self.clone(), name.to_string()))
+        }
+    }
+
+    pub fn try_call(self: &Rc<Self>) -> ObjectResult<Box<dyn Fn(Object) -> Object>> {
+        let self_ = self.clone();
+        if let Some(call_fn) = self.object_vtable.call_fn {
+            Ok(Box::new(move |input| call_fn(self_.get_object_row(), input)))
+        } else {
+            Err(ObjectError::CallNotImplemented(self.clone()))
+        }
+    }
+
+    pub fn try_match(self: &Rc<Self>) -> ObjectResult<Box<dyn Fn(Object) -> ObjectResult<Object>>> {
+        let self_ = self.clone();
+        if let Some(match_fn) = self.object_vtable.match_fn {
+            Ok(Box::new(move |input| match_fn(self_.get_object_row(), input).ok_or(
+                ObjectError::MatchNotImplemented(self_.clone()),
+            )))
+        } else {
+            Err(ObjectError::MatchNotImplemented(self_))
+        }
     }
 }
 
@@ -98,5 +117,11 @@ impl<T: ObjectTrait> Deref for ObjectInner<T> {
 impl<T: ObjectTrait> DerefMut for ObjectInner<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.object
+    }
+}
+
+impl<T: ObjectTrait + ?Sized> Display for ObjectInner<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Object<{}>", std::any::type_name_of_val(&self.object))
     }
 }

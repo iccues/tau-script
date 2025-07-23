@@ -7,25 +7,21 @@ edition = "2024"
 executor = { path = "executor" }
 
 [dev-dependencies]
-lexer = { path = "lexer" }
-parser = { path = "parser" }
+frontend = { path = "frontend" }
 object = { path = "object" }
-token = { path = "library/token" }
 
 
 [workspace]
 members = [
-    "library/error",
-    "library/token",
-    "library/stream",
-
-    "lexer",
-    "parser",
-
-    "executor",
+    "frontend",
+    "frontend/lexer",
+    "frontend/parser",
+    "frontend/frontend-library",
 
     "object",
     "object/object-core",
     "object/object-ext",
     "object/object-types",
+
+    "executor",
 ]

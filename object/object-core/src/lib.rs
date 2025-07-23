@@ -1,6 +1,7 @@
 mod object;
 mod object_trait;
 mod object_vtable;
+pub mod error;
 
 pub mod prelude {
     pub use crate::object::{Object, ObjectInner};

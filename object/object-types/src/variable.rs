@@ -35,7 +35,7 @@ impl ObjectTraitExt for Variable {
     fn get_member(this: Object<Self>, name: &str) -> Option<Object> {
         match name {
             "set" | "on_matched" => None,
-            name => this.value.borrow().get_member(name),
+            name => this.value.borrow().get_member(name).ok(),
         }
     }
 
