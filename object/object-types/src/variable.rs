@@ -4,7 +4,8 @@ use object_core::prelude::*;
 use object_ext::object_ext::ObjectExt;
 use object_ext::object_trait_ext::ObjectTraitExt;
 use object_ext::{matches_, tuple};
-use crate::{callable::{closure::Closure, rust_func::RustFunc}, unit::undefined::Undefined};
+use object_ext::core_type::callable::{closure::Closure, rust_func::RustFunc};
+use crate::unit::undefined::Undefined;
 
 #[derive(Debug)]
 struct VariableType;

@@ -1,5 +1,5 @@
 use object_core::prelude::*;
-use object_ext::object_trait_ext::ObjectTraitExt;
+use crate::object_trait_ext::ObjectTraitExt;
 
 #[derive(Debug)]
 pub struct RustFunc {

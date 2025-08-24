@@ -1,10 +1,19 @@
 use object_core::{error::ObjectResult, prelude::{Object, ObjectTrait}};
 
-use crate::{object_trait_ext::ObjectTraitExt, tuple};
+use crate::{core_type::string::ObjString, object_trait_ext::ObjectTraitExt, tuple};
 
 pub trait ObjectExt : Sized {
     fn match_downcast<T: ObjectTraitExt>(&self) -> ObjectResult<Object<T>>;
     fn on_matched(&self, model: Object) -> Object;
+
+    fn object_to_obj_string(&self) -> ObjectResult<Object<ObjString>>;
+    fn object_to_string(&self) -> String {
+        if let Ok(string) = self.object_to_obj_string() {
+            string.value.clone()
+        } else {
+            "".to_string()
+        }
+    }
 }
 
 impl ObjectExt for Object {
@@ -29,6 +38,12 @@ impl ObjectExt for Object {
             self.clone()
         }
     }
+
+    fn object_to_obj_string(&self) -> ObjectResult<Object<ObjString>> {
+        let to_string_fn = self.get_member("to_string")?;
+        to_string_fn.call(tuple!()).match_downcast()
+    }
+
 }
 
 impl<U: ObjectTrait> ObjectExt for Object<U> {
@@ -38,5 +53,9 @@ impl<U: ObjectTrait> ObjectExt for Object<U> {
 
     fn on_matched(&self, model: Object) -> Object {
         (self.clone() as Object).on_matched(model)
+    }
+
+    fn object_to_obj_string(&self) -> ObjectResult<Object<ObjString>> {
+        (self.clone() as Object).object_to_obj_string()
     }
 }

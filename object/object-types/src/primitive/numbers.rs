@@ -1,12 +1,12 @@
 use object_core::prelude::*;
 use object_ext::object_trait_ext::ObjectTraitExt;
 use object_ext::matches_;
-use crate::callable::{closure::Closure, rust_func::RustFunc};
+use object_ext::core_type::callable::{closure::Closure, rust_func::RustFunc};
 use crate::primitive::bool::ObjBool;
-use crate::primitive::string::ObjString;
+use object_ext::core_type::string::ObjString;
 
 #[derive(Debug)]
-struct ObjI64Type;
+pub struct ObjI64Type;
 
 impl ObjectTrait for ObjI64Type {}
 

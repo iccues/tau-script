@@ -34,6 +34,6 @@ impl Tuple {
 #[macro_export]
 macro_rules! tuple {
     ($($item:tt)*) => {
-        $crate::tuple::Tuple::new(vec![$($item)*])
+        $crate::core_type::tuple::Tuple::new(vec![$($item)*])
     };
 }

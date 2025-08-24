@@ -1,7 +1,8 @@
 use object_core::prelude::*;
+use object_ext::core_type::string::ObjString;
 use object_ext::object_trait_ext::ObjectTraitExt;
 use object_ext::matches_;
-use crate::{callable::{closure::Closure, rust_func::RustFunc}, primitive::string::ObjString};
+use object_ext::core_type::callable::{closure::Closure, rust_func::RustFunc};
 
 #[derive(Debug)]
 struct ObjBoolType;

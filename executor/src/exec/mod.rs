@@ -1,13 +1,13 @@
 use object::core::prelude::*;
 use object::ext::object_ext::ObjectExt;
 use object::ext::tuple;
-use object::types::{primitive::{bool::ObjBool, numbers::ObjI64, string::ObjString}, unit::undefined::Undefined};
-use object::ext::tuple::Tuple;
+use object::types::{primitive::{bool::ObjBool, numbers::ObjI64}, unit::undefined::Undefined};
+use object::ext::core_type::tuple::Tuple;
 use frontend::parser::stmt::Stmt;
 use frontend::frontend_library::token::operator::Operator;
 use frontend::parser::expr::expr::Expr;
 use frontend::parser::expr::factor::literal::Literal;
-
+use object::ext::core_type::string::ObjString;
 use crate::error::ExecutorResult;
 
 pub trait Exec {

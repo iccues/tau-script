@@ -1,6 +1,6 @@
 use std::io::{BufRead, Lines};
 use std::rc::Rc;
-use frontend_library::error::FrontendResult;
+use frontend_library::error::FrontendResult as Result;
 
 use frontend_library::stream::{Position, Stream};
 
@@ -22,7 +22,7 @@ impl CharStream {
         }
     }
 
-    pub fn next(&mut self) -> FrontendResult<char> {
+    pub fn next(&mut self) -> Result<char> {
         self.position.move_right();
         if self.position.column >= self.line.len() {
             match self.reader.next() {
@@ -42,7 +42,7 @@ impl CharStream {
 impl Stream for CharStream {
     type Item = char;
 
-    fn next(&mut self) -> FrontendResult<Self::Item> {
+    fn next(&mut self) -> Result<Self::Item> {
         self.next()
     }
 

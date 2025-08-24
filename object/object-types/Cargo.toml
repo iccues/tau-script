@@ -4,5 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+once_cell = "1"
+
 object-core = { path = "../object-core" }
 object-ext = { path = "../object-ext" }

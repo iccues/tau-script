@@ -1,5 +1,5 @@
 use crate::error::FrontendError;
-use crate::error::FrontendResult;
+use crate::error::FrontendResult as Result;
 use crate::token::identifier::Identifier;
 use crate::token::Token;
 use crate::token::TokenBox;
@@ -30,7 +30,7 @@ const WHILE_KEYWORD: Keyword = Keyword::While;
 const SELF_KEYWORD: Keyword = Keyword::Self_;
 
 impl Keyword {
-    pub fn parse(token: TokenBox) -> FrontendResult<TokenBox> {
+    pub fn parse(token: TokenBox) -> Result<TokenBox> {
         let identifier = token.downcast::<Identifier>()?;
         match &identifier.name()[..] {
             "let" => Ok(TokenBox::Ref(&LET_KEYWORD)),

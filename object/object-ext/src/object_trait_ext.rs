@@ -29,6 +29,14 @@ pub trait ObjectTraitExt: ObjectTrait + Sized {
         )
     }
 
+    fn from_data_type(self, object_type: Option<Object>) -> Object<Self> {
+        ObjectInner::new(
+            self,
+            Self::OBJECT_VTABLE,
+            object_type
+        )
+    }
+
     fn get_member(_this: Object<Self>, name: &str) -> Option<Object> {
         _ = name;
         None
