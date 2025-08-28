@@ -9,6 +9,7 @@ use object_ext::core_type::tuple::Tuple;
 use object_ext::core_type::callable::{closure::Closure, rust_func::RustFunc};
 
 use crate::primitive::numbers::ObjI64;
+use crate::register_build_in;
 
 #[derive(Debug)]
 pub struct ListTypeType;
@@ -30,6 +31,8 @@ impl ObjectTraitExt for ListTypeType {
         ListType::new(_this, list_type)
     }
 }
+
+register_build_in!("list_type", ListTypeType.from_data());
 
 
 #[derive(Debug)]

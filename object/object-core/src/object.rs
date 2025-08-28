@@ -127,5 +127,5 @@ impl<T: ObjectTrait + ?Sized> Display for ObjectInner<T> {
     }
 }
 
-// unsafe impl<T: ObjectTrait + ?Sized> Sync for ObjectInner<T> {}
-// unsafe impl<T: ObjectTrait + ?Sized> Send for ObjectInner<T> {}
+unsafe impl<T: ObjectTrait + ?Sized> Sync for ObjectInner<T> {}
+unsafe impl<T: ObjectTrait + ?Sized> Send for ObjectInner<T> {}
