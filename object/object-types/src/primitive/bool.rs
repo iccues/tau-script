@@ -4,10 +4,8 @@ use object_ext::object_trait_ext::ObjectTraitExt;
 use object_ext::matches_;
 use object_ext::core_type::callable::{closure::Closure, rust_func::RustFunc};
 
-#[derive(Debug)]
+#[derive(Debug, ObjectTrait)]
 struct ObjBoolType;
-
-impl ObjectTrait for ObjBoolType {}
 
 impl ObjectTraitExt for ObjBoolType {
     fn get_member(_this: Object<Self>, name: &str) -> Option<Object> {
@@ -20,12 +18,10 @@ impl ObjectTraitExt for ObjBoolType {
     const MATCHABLE: bool = true;
 }
 
-#[derive(Debug)]
+#[derive(Debug, ObjectTrait)]
 pub struct ObjBool {
     pub value: bool,
 }
-
-impl ObjectTrait for ObjBool {}
 
 impl ObjectTraitExt for ObjBool {
     fn get_object_type() -> Option<Object> {

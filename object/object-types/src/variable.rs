@@ -7,10 +7,8 @@ use object_ext::{matches_, tuple};
 use object_ext::core_type::callable::{closure::Closure, rust_func::RustFunc};
 use crate::unit::undefined::Undefined;
 
-#[derive(Debug)]
+#[derive(Debug, ObjectTrait)]
 struct VariableType;
-
-impl ObjectTrait for VariableType {}
 
 impl ObjectTraitExt for VariableType {
     fn get_member(_this: Object<Self>, name: &str) -> Option<Object> {
@@ -25,12 +23,10 @@ impl ObjectTraitExt for VariableType {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, ObjectTrait)]
 pub struct Variable {
     value: RefCell<Object>
 }
-
-impl ObjectTrait for Variable {}
 
 impl ObjectTraitExt for Variable {
     fn get_member(this: Object<Self>, name: &str) -> Option<Object> {

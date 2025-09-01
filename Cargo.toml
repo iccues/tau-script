@@ -20,6 +20,7 @@ members = [
 
     "object",
     "object/object-core",
+    "object/object-core/object-trait-derive",
     "object/object-ext",
     "object/object-types",
 

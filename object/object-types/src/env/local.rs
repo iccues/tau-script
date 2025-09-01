@@ -4,13 +4,11 @@ use object_core::prelude::*;
 use object_ext::object_trait_ext::ObjectTraitExt;
 use crate::variable::Variable;
 
-#[derive(Debug)]
+#[derive(Debug, ObjectTrait)]
 pub struct ObjLocal {
     map: RefCell<HashMap<String, Object>>,
     outer: Option<Object>,
 }
-
-impl ObjectTrait for ObjLocal {}
 
 impl ObjectTraitExt for ObjLocal {
     fn get_member(this: Object<Self>, name: &str) -> Option<Object> {

@@ -3,10 +3,8 @@ use crate::object_trait_ext::ObjectTraitExt;
 use crate::matches_;
 use crate::core_type::callable::{closure::Closure, rust_func::RustFunc};
 
-#[derive(Debug)]
+#[derive(Debug, ObjectTrait)]
 struct ObjStringType;
-
-impl ObjectTrait for ObjStringType {}
 
 impl ObjectTraitExt for ObjStringType {
     fn get_member(_this: Object<Self>, name: &str) -> Option<Object> {
@@ -19,12 +17,10 @@ impl ObjectTraitExt for ObjStringType {
     const MATCHABLE: bool = true;
 }
 
-#[derive(Debug)]
+#[derive(Debug, ObjectTrait)]
 pub struct ObjString {
     pub value: String,
 }
-
-impl ObjectTrait for ObjString {}
 
 impl ObjectTraitExt for ObjString {
     fn get_object_type() -> Option<Object> {

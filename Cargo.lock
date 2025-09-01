@@ -78,6 +78,7 @@ dependencies = [
 name = "object-core"
 version = "0.1.0"
 dependencies = [
+ "object-trait-derive",
  "thiserror",
 ]
 
@@ -86,6 +87,14 @@ name = "object-ext"
 version = "0.1.0"
 dependencies = [
  "object-core",
+]
+
+[[package]]
+name = "object-trait-derive"
+version = "0.1.0"
+dependencies = [
+ "quote",
+ "syn",
 ]
 
 [[package]]

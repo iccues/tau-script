@@ -1,12 +1,10 @@
 use object_core::prelude::*;
 use crate::object_trait_ext::ObjectTraitExt;
 
-#[derive(Debug)]
+#[derive(Debug, ObjectTrait)]
 pub struct RustFunc {
     value: fn(Object) -> Object,
 }
-
-impl ObjectTrait for RustFunc {}
 
 impl ObjectTraitExt for RustFunc {
     const CALLABLE: bool = true;

@@ -2,14 +2,12 @@ use object_core::prelude::*;
 use crate::object_trait_ext::ObjectTraitExt;
 use crate::core_type::tuple::Tuple;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, ObjectTrait)]
 pub struct Closure {
     func: Object,
     context: Vec<Object>,
     times: usize,
 }
-
-impl ObjectTrait for Closure {}
 
 impl ObjectTraitExt for Closure {
     const CALLABLE: bool = true;

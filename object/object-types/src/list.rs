@@ -11,10 +11,8 @@ use object_ext::core_type::callable::{closure::Closure, rust_func::RustFunc};
 use crate::primitive::numbers::ObjI64;
 use crate::register_build_in;
 
-#[derive(Debug)]
+#[derive(Debug, ObjectTrait)]
 pub struct ListTypeType;
-
-impl ObjectTrait for ListTypeType {}
 
 impl ObjectTraitExt for ListTypeType {
     fn get_member(_this: Object<Self>, name: &str) -> Option<Object> {
@@ -35,12 +33,10 @@ impl ObjectTraitExt for ListTypeType {
 register_build_in!("list_type", ListTypeType.from_data());
 
 
-#[derive(Debug)]
+#[derive(Debug, ObjectTrait)]
 pub struct ListType {
     pub type_: Object,
 }
-
-impl ObjectTrait for ListType {}
 
 impl ObjectTraitExt for ListType {
     fn get_object_type() -> Option<Object> {
@@ -71,12 +67,10 @@ impl ListType {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, ObjectTrait)]
 pub struct List {
     pub elements: RefCell<Vec<Object>>,
 }
-
-impl ObjectTrait for List {}
 
 impl ObjectTraitExt for List {}
 

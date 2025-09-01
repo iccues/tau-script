@@ -4,12 +4,10 @@ use std::sync::{LazyLock, RwLock};
 use object_core::prelude::*;
 use object_ext::object_trait_ext::ObjectTraitExt;
 
-#[derive(Debug)]
+#[derive(Debug, ObjectTrait)]
 pub struct BuildIn {
     map: RwLock<HashMap<String, Object>>,
 }
-
-impl ObjectTrait for BuildIn {}
 
 impl ObjectTraitExt for BuildIn {
     fn get_member(this: Object<Self>, name: &str) -> Option<Object> {

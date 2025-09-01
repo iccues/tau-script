@@ -1,12 +1,10 @@
 use object_core::prelude::*;
 use object_ext::object_trait_ext::ObjectTraitExt;
 
-#[derive(Debug)]
+#[derive(Debug, ObjectTrait)]
 pub struct ObjError {
     pub message: String,
 }
-
-impl ObjectTrait for ObjError {}
 
 impl ObjectTraitExt for ObjError {
     

@@ -2,16 +2,12 @@ use object_core::prelude::*;
 
 use crate::object_trait_ext::ObjectTraitExt;
 
-#[derive(Debug)]
+#[derive(Debug, ObjectTrait)]
 pub struct Tuple {
     elements: Vec<Object>,
 }
 
-impl ObjectTrait for Tuple {}
-
-impl ObjectTraitExt for Tuple {
-    
-}
+impl ObjectTraitExt for Tuple {}
 
 impl Tuple {
     pub fn new(elements: Vec<Object>) -> Object {

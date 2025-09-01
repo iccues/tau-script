@@ -6,10 +6,8 @@ use crate::primitive::bool::ObjBool;
 use object_ext::core_type::string::ObjString;
 use crate::register_build_in;
 
-#[derive(Debug)]
+#[derive(Debug, ObjectTrait)]
 pub struct ObjI64Type;
-
-impl ObjectTrait for ObjI64Type {}
 
 impl ObjectTraitExt for ObjI64Type {
     fn get_member(_this: Object<Self>, name: &str) -> Option<Object> {
@@ -28,12 +26,10 @@ impl ObjectTraitExt for ObjI64Type {
 register_build_in!("int", ObjI64Type.from_data());
 
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, ObjectTrait, PartialEq, Eq)]
 pub struct ObjI64 {
     pub value: i64,
 }
-
-impl ObjectTrait for ObjI64 {}
 
 impl ObjectTraitExt for ObjI64 {
     fn get_object_type() -> Option<Object> {
