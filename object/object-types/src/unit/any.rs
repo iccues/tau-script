@@ -1,12 +1,10 @@
 use object_core::prelude::{Object, ObjectTrait};
 use object_ext::object_trait_ext::ObjectTraitExt;
 
-use crate::register_build_in;
-
 #[derive(Debug, ObjectTrait)]
-pub struct Any;
+pub struct ObjAny;
 
-impl ObjectTraitExt for Any {
+impl ObjectTraitExt for ObjAny {
     const MATCHABLE: bool = true;
 
     fn match_(_this: Object<Self>, input: Object) -> Option<Object> {
@@ -14,10 +12,8 @@ impl ObjectTraitExt for Any {
     }
 }
 
-impl Any {
-    pub fn new() -> Object<Any> {
-        Any.from_data()
+impl ObjAny {
+    pub fn new() -> Object<ObjAny> {
+        ObjAny.from_data()
     }
 }
-
-register_build_in!("any", Any::new());

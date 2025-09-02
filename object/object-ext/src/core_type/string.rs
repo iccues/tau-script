@@ -4,7 +4,7 @@ use crate::matches_;
 use crate::core_type::callable::{closure::Closure, rust_func::RustFunc};
 
 #[derive(Debug, ObjectTrait)]
-struct ObjStringType;
+pub struct ObjStringType;
 
 impl ObjectTraitExt for ObjStringType {
     fn get_member(_this: Object<Self>, name: &str) -> Option<Object> {

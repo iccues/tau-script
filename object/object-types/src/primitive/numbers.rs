@@ -4,7 +4,6 @@ use object_ext::matches_;
 use object_ext::core_type::callable::{closure::Closure, rust_func::RustFunc};
 use crate::primitive::bool::ObjBool;
 use object_ext::core_type::string::ObjString;
-use crate::register_build_in;
 
 #[derive(Debug, ObjectTrait)]
 pub struct ObjI64Type;
@@ -22,8 +21,6 @@ impl ObjectTraitExt for ObjI64Type {
 
     const MATCHABLE: bool = true;
 }
-
-register_build_in!("int", ObjI64Type.from_data());
 
 
 #[derive(Debug, ObjectTrait, PartialEq, Eq)]

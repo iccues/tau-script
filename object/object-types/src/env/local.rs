@@ -7,7 +7,7 @@ use crate::variable::Variable;
 #[derive(Debug, ObjectTrait)]
 pub struct ObjLocal {
     map: RefCell<HashMap<String, Object>>,
-    outer: Option<Object>,
+    prelude: Option<Object>,
 }
 
 impl ObjectTraitExt for ObjLocal {
@@ -15,8 +15,8 @@ impl ObjectTraitExt for ObjLocal {
         if let Some(ret) = this.map.borrow().get(name) {
             Some(ret.clone())
         } else {
-            if let Some(outer) = &this.outer {
-                if let Ok(ret) = outer.get_member(name) {
+            if let Some(prelude) = &this.prelude {
+                if let Ok(ret) = prelude.get_member(name) {
                     return Some(ret);
                 }
             }
@@ -31,14 +31,14 @@ impl ObjLocal {
     pub fn new() -> Object<Self> {
         Self::from_data(Self {
             map: RefCell::new(HashMap::new()),
-            outer: None,
+            prelude: None,
         })
     }
 
-    pub fn from_outer(outer: Object) -> Object<Self> {
+    pub fn from_prelude(prelude: Object) -> Object<Self> {
         Self::from_data(Self {
             map: RefCell::new(HashMap::new()),
-            outer: Some(outer),
+            prelude: Some(prelude),
         })
     }
 }

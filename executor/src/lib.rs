@@ -7,7 +7,7 @@ use frontend::frontend_library::stream::peeker::Peeker;
 use frontend::frontend_library::token::TokenBox;
 use object::core::prelude::*;
 use object::ext::tuple;
-use object::types::env::build_in::BuildIn;
+use object::types::env::prelude;
 use object::ext::core_type::string::ObjString;
 use frontend::parser::parse_stmt;
 use exec::Exec;
@@ -17,7 +17,7 @@ use crate::error::ExecutorResult;
 
 pub fn execute(input: impl Read + 'static, output: &mut impl Write) {
     let mut lexer = frontend::lexer::get_lexer(input);
-    let env: Object = ObjLocal::from_outer(BuildIn::new());
+    let env: Object = ObjLocal::from_prelude(prelude::prelude.clone());
 
     loop {
         if let Err(err) = execute_stmt(&mut lexer, output, &env) {

@@ -9,16 +9,15 @@ use object_ext::core_type::tuple::Tuple;
 use object_ext::core_type::callable::{closure::Closure, rust_func::RustFunc};
 
 use crate::primitive::numbers::ObjI64;
-use crate::register_build_in;
 
 #[derive(Debug, ObjectTrait)]
-pub struct ListTypeType;
+pub struct ObjListTypeType;
 
-impl ObjectTraitExt for ListTypeType {
+impl ObjectTraitExt for ObjListTypeType {
     fn get_member(_this: Object<Self>, name: &str) -> Option<Object> {
         match name {
-            "to_string" => Some(Closure::new(RustFunc::new(List::to_string), 3)),
-            "insert" => Some(Closure::new(RustFunc::new(List::insert), 3)),
+            "to_string" => Some(Closure::new(RustFunc::new(ObjList::to_string), 3)),
+            "insert" => Some(Closure::new(RustFunc::new(ObjList::insert), 3)),
             _ => None,
         }
     }
@@ -26,21 +25,19 @@ impl ObjectTraitExt for ListTypeType {
     const CALLABLE: bool = true;
     fn call(_this: Object<Self>, input: Object) -> Object {
         matches_!((list_type) = input);
-        ListType::new(_this, list_type)
+        ObjListType::new(_this, list_type)
     }
 }
 
-register_build_in!("list_type", ListTypeType.from_data());
-
 
 #[derive(Debug, ObjectTrait)]
-pub struct ListType {
+pub struct ObjListType {
     pub type_: Object,
 }
 
-impl ObjectTraitExt for ListType {
+impl ObjectTraitExt for ObjListType {
     fn get_object_type() -> Option<Object> {
-        Some(ListTypeType.from_data())
+        Some(ObjListTypeType.from_data())
     }
 
     const CALLABLE: bool = true;
@@ -52,15 +49,15 @@ impl ObjectTraitExt for ListType {
                 panic!("Unmatched input");
             }
         }
-        List::new(this, RefCell::new(elements))
+        ObjList::new(this, RefCell::new(elements))
     }
 }
 
-impl ListType {
+impl ObjListType {
     fn new(list_type_type: Object, input: Object) -> Object {
         matches_!(type_ = input);
         Self::from_data_type(
-            ListType { type_ },
+            ObjListType { type_ },
             Some(list_type_type)
         )
     }
@@ -68,22 +65,22 @@ impl ListType {
 
 
 #[derive(Debug, ObjectTrait)]
-pub struct List {
+pub struct ObjList {
     pub elements: RefCell<Vec<Object>>,
 }
 
-impl ObjectTraitExt for List {}
+impl ObjectTraitExt for ObjList {}
 
-impl List {
+impl ObjList {
     fn new(list_type: Object, elements: RefCell<Vec<Object>>) -> Object {
         Self::from_data_type(
-            List { elements },
+            ObjList { elements },
             Some(list_type)
         )
     }
 
     fn to_string(input: Object) -> Object {
-        matches_!((_list_type, list: List, ()) = input);
+        matches_!((_list_type, list: ObjList, ()) = input);
         let elements: Vec<String> = list.elements.borrow().iter()
             .map(|e| e.object_to_string())
             .collect();
@@ -91,7 +88,7 @@ impl List {
     }
 
     fn insert(input: Object) -> Object {
-        matches_!((list_type: ListType, list: List, (index: ObjI64, element)) = input);
+        matches_!((list_type: ObjListType, list: ObjList, (index: ObjI64, element)) = input);
         if list_type.type_.match_(element.clone()).is_none() {
                 panic!("Unmatched input");
             }
