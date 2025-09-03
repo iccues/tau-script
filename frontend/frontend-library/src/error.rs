@@ -21,9 +21,6 @@ impl FrontendError {
     pub fn is_fatal(&self) -> bool {
         matches!(self, FrontendError::Io(_) | FrontendError::UnknownToken)
     }
-    // pub fn is_recoverable(&self) -> bool {
-    //     matches!(self, FrontendError::Io(_) | FrontendError::None)
-    // }
 }
 
 #[macro_export]
