@@ -16,6 +16,9 @@ pub enum Keyword {
     Else,
     While,
     Self_,
+
+    True,
+    False,
 }
 
 const LET_KEYWORD: Keyword = Keyword::Let;
@@ -28,6 +31,9 @@ const IF_KEYWORD: Keyword = Keyword::If;
 const ELSE_KEYWORD: Keyword = Keyword::Else;
 const WHILE_KEYWORD: Keyword = Keyword::While;
 const SELF_KEYWORD: Keyword = Keyword::Self_;
+
+const TRUE_KEYWORD: Keyword = Keyword::True;
+const FALSE_KEYWORD: Keyword = Keyword::False;
 
 impl Keyword {
     pub fn parse(token: TokenBox) -> Result<TokenBox> {
@@ -43,6 +49,9 @@ impl Keyword {
             "else" => Ok(TokenBox::Ref(&ELSE_KEYWORD)),
             "while" => Ok(TokenBox::Ref(&WHILE_KEYWORD)),
             "self" => Ok(TokenBox::Ref(&SELF_KEYWORD)),
+
+            "true" => Ok(TokenBox::Ref(&TRUE_KEYWORD)),
+            "false" => Ok(TokenBox::Ref(&FALSE_KEYWORD)),
             _ => Err(FrontendError::None),
         }
     }

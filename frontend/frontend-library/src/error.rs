@@ -7,6 +7,12 @@ pub enum FrontendError {
     #[error("IO error: {0}")]
     Io(#[from] Rc<std::io::Error>),
 
+    #[error("Parse int error: {0}")]
+    ParseInt(#[from] std::num::ParseIntError),
+
+    #[error("Parse float error: {0}")]
+    ParseFloat(#[from] std::num::ParseFloatError),
+
     #[error("")]
     None,
 

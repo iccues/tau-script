@@ -8,7 +8,7 @@ use object_ext::core_type::string::ObjString;
 use object_ext::core_type::tuple::Tuple;
 use object_ext::core_type::callable::{closure::Closure, rust_func::RustFunc};
 
-use crate::primitive::numbers::ObjI64;
+use crate::primitive::integer::ObjI64;
 
 #[derive(Debug, ObjectTrait)]
 pub struct ObjListTypeType;

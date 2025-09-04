@@ -80,7 +80,7 @@ mod tests {
         let c = a.get_member("to_string").unwrap().call(tuple!());
         assert_eq!(c.downcast::<ObjString>().unwrap().value, "42")
     }
-
+    
     #[test]
     fn test_integer_eq() {
         let a: Object = ObjI64::new(42);

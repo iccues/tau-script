@@ -133,9 +133,9 @@ impl Lexer {
                     num.push(self.char_peeker.next()?);
                     c = self.char_peeker.peek()?;
                 }
-                Ok(Float::new(num))
+                Float::new(num)
             } else {
-                Ok(Integer::new(num))
+                Integer::new(num)
             }
         }
 
@@ -156,7 +156,7 @@ impl Lexer {
                 c = self.char_peeker.peek()?;
             }
             string.push(self.char_peeker.next()?);
-            Ok(StringToken::new(string))
+            StringToken::new(string)
         } else {
             Err(FrontendError::None)
         }

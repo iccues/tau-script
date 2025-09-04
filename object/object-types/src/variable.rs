@@ -89,7 +89,7 @@ impl Variable {
 mod tests {
     // use object_ext::tools::match_downcast;
     use object_ext::object_ext::ObjectExt;
-    use crate::primitive::numbers::ObjI64;
+    use crate::primitive::integer::ObjI64;
     use super::*;
 
     #[test]
