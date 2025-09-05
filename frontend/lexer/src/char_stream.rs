@@ -1,8 +1,7 @@
 use std::io::{BufRead, Lines};
-use std::rc::Rc;
 use frontend_library::error::FrontendResult as Result;
-
-use frontend_library::stream::{Position, Stream};
+use frontend_library::position::Position;
+use frontend_library::stream::Stream;
 
 
 pub const EOF_CHAR: char = '\0';
@@ -10,7 +9,7 @@ pub const EOF_CHAR: char = '\0';
 pub struct CharStream {
     reader: Lines<Box<dyn BufRead>>,
     line: Vec<char>,
-    pub position: Position,
+    position: Position,
 }
 
 impl CharStream {
@@ -25,17 +24,19 @@ impl CharStream {
     pub fn next(&mut self) -> Result<char> {
         self.position.move_right();
         if self.position.column >= self.line.len() {
-            match self.reader.next() {
-                Some(Ok(line)) => {
-                    self.line = line.chars().collect();
-                    self.line.push('\n');
-                    self.position.move_down();
-                }
-                Some(Err(err)) => return Err(Rc::new(err).into()),
-                None => return Ok(EOF_CHAR),
+            if let Some(line) = self.reader.next() {
+                self.line = line?.chars().collect();
+                self.line.push('\n');
+                self.position.move_down();
+            } else {
+                return Ok(EOF_CHAR);
             }
         }
         Ok(self.line[self.position.column])
+    }
+
+    pub fn position(&self) -> Position {
+        self.position
     }
 }
 
@@ -44,12 +45,5 @@ impl Stream for CharStream {
 
     fn next(&mut self) -> Result<Self::Item> {
         self.next()
-    }
-
-    fn last_position(&self) -> Position {
-        self.position
-    }
-    fn next_position(&self) -> Position {
-        self.position
     }
 }

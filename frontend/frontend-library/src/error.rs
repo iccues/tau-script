@@ -5,7 +5,7 @@ pub type FrontendResult<T> = Result<T, FrontendError>;
 #[derive(Debug, thiserror::Error, Clone)]
 pub enum FrontendError {
     #[error("IO error: {0}")]
-    Io(#[from] Rc<std::io::Error>),
+    Io(Rc<std::io::Error>),
 
     #[error("Parse int error: {0}")]
     ParseInt(#[from] std::num::ParseIntError),
@@ -21,6 +21,12 @@ pub enum FrontendError {
 
     #[error("Unknown token encountered")]
     UnknownToken,
+}
+
+impl From<std::io::Error> for FrontendError {
+    fn from(err: std::io::Error) -> Self {
+        FrontendError::Io(Rc::new(err))
+    }
 }
 
 impl FrontendError {

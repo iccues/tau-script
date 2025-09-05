@@ -1,6 +1,5 @@
 use frontend_library::error::FrontendResult as Result;
 
-use frontend_library::stream::Position;
 use frontend_library::stream::{peeker::Peeker, Stream};
 use frontend_library::token::TokenBox;
 use frontend_library::token::keyword::Keyword;
@@ -14,13 +13,6 @@ impl Stream for TokenProcessor {
 
     fn next(&mut self) -> Result<Self::Item> {
         self.next_token()
-    }
-
-    fn last_position(&self) -> Position {
-        self.input.last_position()
-    }
-    fn next_position(&self) -> Position {
-        self.input.next_position()
     }
 }
 

@@ -1,11 +1,11 @@
 use std::collections::VecDeque;
 
-use super::{Position, Stream};
+use super::Stream;
 use crate::{error::{FrontendError, FrontendResult}, token::{Token, TokenBox}};
 
 pub struct Peeker<I: Clone> {
     inner: Box<dyn Stream<Item = I>>,
-    buffer: VecDeque<(Position, Position, FrontendResult<I>)>,
+    buffer: VecDeque<FrontendResult<I>>,
 }
 
 impl<I: Clone> Stream for Peeker<I> {
@@ -13,21 +13,6 @@ impl<I: Clone> Stream for Peeker<I> {
 
     fn next(&mut self) -> FrontendResult<Self::Item> {
         self.next()
-    }
-
-    fn last_position(&self) -> Position {
-        if self.buffer.is_empty() {
-            self.inner.last_position()
-        } else {
-            self.buffer[0].0
-        }
-    }
-    fn next_position(&self) -> Position {
-        if self.buffer.is_empty() {
-            self.inner.next_position()
-        } else {
-            self.buffer[0].1
-        }
     }
 }
 
@@ -40,24 +25,22 @@ impl<I: Clone> Peeker<I> {
     }
 
     fn get_next(&mut self) {
-        let last_position = self.inner.last_position();
-        let next_position = self.inner.next_position();
         let item = self.inner.next();
-        self.buffer.push_back((last_position, next_position, item));
+        self.buffer.push_back(item);
     }
 
     pub fn peek(&mut self) -> FrontendResult<I> {
         if self.buffer.is_empty() {
             self.get_next();
         }
-        self.buffer[0].2.clone()
+        self.buffer[0].clone()
     }
 
     pub fn peek_n(&mut self, n: usize) -> FrontendResult<I> {
         for _ in self.buffer.len()..n + 1 {
             self.get_next();
         }
-        self.buffer[n].2.clone()
+        self.buffer[n].clone()
     }
 
     pub fn peeks(&mut self, n: usize) -> FrontendResult<Vec<I>> {
@@ -68,7 +51,7 @@ impl<I: Clone> Peeker<I> {
         self.buffer
             .iter()
             .take(n)
-            .map(|x| x.2.clone())
+            .map(|x| x.clone())
             .collect::<FrontendResult<Vec<I>>>()
     }
 
@@ -76,7 +59,7 @@ impl<I: Clone> Peeker<I> {
         if self.buffer.is_empty() {
             self.get_next();
         }
-        self.buffer.pop_front().unwrap().2
+        self.buffer.pop_front().unwrap()
     }
 }
 

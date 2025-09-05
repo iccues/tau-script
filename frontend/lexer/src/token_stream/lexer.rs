@@ -1,5 +1,4 @@
 use frontend_library::error::{FrontendError, FrontendResult as Result};
-use frontend_library::stream::Position;
 
 use crate::char_stream::EOF_CHAR;
 use frontend_library::stream::{peeker::Peeker, Stream};
@@ -20,13 +19,6 @@ impl Stream for Lexer {
 
     fn next(&mut self) -> Result<Self::Item> {
         self.next_token()
-    }
-
-    fn last_position(&self) -> Position {
-        self.char_peeker.last_position()
-    }
-    fn next_position(&self) -> Position {
-        self.char_peeker.next_position()
     }
 }
 
