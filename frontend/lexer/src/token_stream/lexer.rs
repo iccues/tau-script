@@ -55,40 +55,32 @@ impl Lexer {
     }
 
     fn parse_comment(&mut self) -> Result<TokenBox> {
-        match &self.char_peeker.peek_str(2)?[..] {
-            "//" => {
-                let mut text = String::new();
-
-                self.char_peeker.next()?;
-                self.char_peeker.next()?;
-
-                let mut c = self.char_peeker.peek()?;
-                while c != '\n' && c != EOF_CHAR {
-                    text.push(self.char_peeker.next()?);
-                    c = self.char_peeker.peek()?;
-                }
-                Ok(Comment::new(Some(text)))
-
+        try_parse!(self.parse_comment_short());
+        try_parse!(self.parse_comment_long());
+        Err(FrontendError::None)
+    }
+    fn parse_comment_short(&mut self) -> Result<TokenBox> {
+        self.char_peeker.eat_str("//")?;
+        let mut text = String::new();
+        let mut c = self.char_peeker.peek()?;
+        while c != '\n' && c != EOF_CHAR {
+            text.push(self.char_peeker.next()?);
+            c = self.char_peeker.peek()?;
+        }
+        Ok(Comment::new(Some(text)))
+    }
+    fn parse_comment_long(&mut self) -> Result<TokenBox> {
+        self.char_peeker.eat_str("/*")?;
+        let mut text = String::new();
+        loop {
+            match self.char_peeker.eat_str("*/") {
+                Ok(()) => return Ok(Comment::new(Some(text))),
+                Err(FrontendError::None) => {
+                    let c = self.char_peeker.next()?;
+                    text.push(c);
+                },
+                Err(e) => return Err(e),
             }
-            "/*" => {
-                let mut text = String::new();
-
-                self.char_peeker.next()?;
-                self.char_peeker.next()?;
-    
-                let mut s = self.char_peeker.peek_str(2)?;
-                while s != "*/" {
-                    text.push(self.char_peeker.next()?);
-                    s = self.char_peeker.peek_str(2)?;
-                }
-    
-                self.char_peeker.next()?;
-                self.char_peeker.next()?;
-    
-                Ok(Comment::new(Some(text)))
-    
-            }
-            _ => Err(FrontendError::None),
         }
     }
 
