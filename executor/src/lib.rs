@@ -3,8 +3,7 @@ pub mod error;
 
 use std::io::{Read, Write};
 
-use frontend::frontend_library::stream::peeker::Peeker;
-use frontend::frontend_library::token::TokenBox;
+use frontend::lexer::token_peeker::TokenPeeker;
 use object::core::prelude::*;
 use object::ext::tuple;
 use object::types::env::prelude;
@@ -27,7 +26,7 @@ pub fn execute(input: impl Read + 'static, output: &mut impl Write) {
     }
 }
 
-fn execute_stmt(lexer: &mut Peeker<TokenBox>, output: &mut impl Write, env: &Object) -> ExecutorResult<()> {
+fn execute_stmt(lexer: &mut TokenPeeker, output: &mut impl Write, env: &Object) -> ExecutorResult<()> {
     let stmt = parse_stmt(lexer)?;
     let result = stmt.exec(env)?;
     _ = print_object(result, output);

@@ -1,9 +1,9 @@
 use frontend_library::try_parse;
 use frontend_library::error::{FrontendError, FrontendResult as Result};
-use frontend_library::stream::peeker::Peeker;
 use frontend_library::token::TokenBox;
 use frontend_library::token::identifier::Identifier;
 use frontend_library::token::operator::Operator;
+use lexer::token_peeker::TokenPeeker;
 use crate::expr::binary_expr::BinaryExpr;
 use crate::expr::factor::block::Block;
 use crate::expr::factor::if_expr::IfExpr;
@@ -38,15 +38,15 @@ pub enum Expr {
 }
 
 impl Expr {
-    pub fn parse(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
+    pub fn parse(peeker: &mut TokenPeeker) -> Result<Box<Expr>> {
         Self::parse_binary(peeker)
     }
 
-    fn parse_binary(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
+    fn parse_binary(peeker: &mut TokenPeeker) -> Result<Box<Expr>> {
         BinaryExpr::parse(peeker)
     }
 
-    pub fn parse_postfix(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
+    pub fn parse_postfix(peeker: &mut TokenPeeker) -> Result<Box<Expr>> {
         let mut first = Self::parse_factor(peeker)?;
         let mut changed = true;
         let mut t;
@@ -59,7 +59,7 @@ impl Expr {
         Ok(first)
     }
 
-    pub fn parse_factor(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
+    pub fn parse_factor(peeker: &mut TokenPeeker) -> Result<Box<Expr>> {
         try_parse!(Block::parse(peeker));
         try_parse!(IfExpr::parse(peeker));
         try_parse!(WhileExpr::parse(peeker));
@@ -70,12 +70,12 @@ impl Expr {
         Err(FrontendError::None)
     }
 
-    fn parse_id(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
+    fn parse_id(peeker: &mut TokenPeeker) -> Result<Box<Expr>> {
         let id = peeker.eat_type::<Identifier>()?;
         Ok(Box::new(Expr::Identifier(id.name())))
     }
 
-    fn parse_unary(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
+    fn parse_unary(peeker: &mut TokenPeeker) -> Result<Box<Expr>> {
         if peeker.peek()?
             .downcast::<Operator>()
             .is_ok_and(|o| o.is_unary())

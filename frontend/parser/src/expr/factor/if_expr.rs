@@ -1,6 +1,6 @@
 use frontend_library::error::FrontendResult as Result;
-use frontend_library::stream::peeker::Peeker;
-use frontend_library::token::{operator::Operator, keyword::Keyword, TokenBox};
+use frontend_library::token::{operator::Operator, keyword::Keyword};
+use lexer::token_peeker::TokenPeeker;
 
 use crate::expr::expr::Expr;
 
@@ -12,7 +12,7 @@ pub struct IfExpr {
 }
 
 impl IfExpr {
-    pub fn parse(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
+    pub fn parse(peeker: &mut TokenPeeker) -> Result<Box<Expr>> {
         peeker.eat_eq(&Keyword::If)?;
         peeker.eat_eq(&Operator::OpenParen)?;
         let condition = Expr::parse(peeker)?;

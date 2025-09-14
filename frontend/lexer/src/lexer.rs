@@ -1,7 +1,8 @@
 use frontend_library::error::{FrontendError, FrontendResult as Result};
+use frontend_library::token::keyword::Keyword;
 
 use crate::char_stream::EOF_CHAR;
-use frontend_library::stream::{peeker::Peeker, Stream};
+use frontend_library::stream::peeker::Peeker;
 use frontend_library::token::comment::Comment;
 use frontend_library::token::identifier::Identifier;
 use frontend_library::token::number::{Float, Integer};
@@ -10,17 +11,12 @@ use frontend_library::token::singleton_token::EofToken;
 use frontend_library::token::string::StringToken;
 use frontend_library::token::TokenBox;
 use frontend_library::try_parse;
+
+
 pub struct Lexer {
     char_peeker: Peeker<char>,
 }
 
-impl Stream for Lexer {
-    type Item = TokenBox;
-
-    fn next(&mut self) -> Result<Self::Item> {
-        self.next_token()
-    }
-}
 
 impl Lexer {
     pub fn new(char_peeker: Peeker<char>) -> Self {
@@ -29,11 +25,11 @@ impl Lexer {
         }
     }
 
-    pub fn next_token(&mut self) -> Result<TokenBox> {
+    pub fn next(&mut self) -> Result<TokenBox> {
         self.skip_whitespace()?;
 
         try_parse!(self.parse_comment());
-        try_parse!(self.parse_ident());
+        try_parse!(self.parse_ident_and_keyword());
         try_parse!(self.parse_number());
         try_parse!(self.parse_string());
         try_parse!(self.parse_operator());
@@ -84,6 +80,15 @@ impl Lexer {
         }
     }
 
+    // TODO
+    fn parse_ident_and_keyword(&mut self) -> Result<TokenBox> {
+        let ident = self.parse_ident()?;
+        if let Ok(keyword) = Keyword::parse(ident.clone()) {
+            Ok(keyword)
+        } else {
+            Ok(ident)
+        }
+    }
     fn parse_ident(&mut self) -> Result<TokenBox> {
         let mut c = self.char_peeker.peek()?;
         

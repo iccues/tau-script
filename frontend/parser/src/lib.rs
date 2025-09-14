@@ -1,12 +1,11 @@
-use frontend_library::stream::peeker::Peeker;
-use frontend_library::token::TokenBox;
+use lexer::token_peeker::TokenPeeker;
 use stmt::Stmt;
 use frontend_library::error::FrontendResult as Result;
 
 pub mod expr;
 pub mod stmt;
 
-pub fn parse_stmt(peeker: &mut Peeker<TokenBox>) -> Result<Stmt> {
+pub fn parse_stmt(peeker: &mut TokenPeeker) -> Result<Stmt> {
     Stmt::parse(peeker)
 }
 

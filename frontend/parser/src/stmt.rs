@@ -1,6 +1,6 @@
-use frontend_library::stream::peeker::Peeker;
-use frontend_library::token::{operator::Operator, TokenBox};
+use frontend_library::token::operator::Operator;
 use frontend_library::error::FrontendResult as Result;
+use lexer::token_peeker::TokenPeeker;
 
 use crate::expr::expr::Expr;
 
@@ -11,7 +11,7 @@ pub enum Stmt {
 }
 
 impl Stmt {
-    pub fn parse(peeker: &mut Peeker<TokenBox>) -> Result<Stmt> {
+    pub fn parse(peeker: &mut TokenPeeker) -> Result<Stmt> {
         let expr = Expr::parse(peeker)?;
         peeker.eat_eq(&Operator::Semi)?;
         Ok(Stmt::Expr(expr))

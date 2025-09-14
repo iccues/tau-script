@@ -1,5 +1,5 @@
-use frontend_library::stream::peeker::Peeker;
 use frontend_library::token::{operator::Operator, TokenBox};
+use lexer::token_peeker::TokenPeeker;
 
 use crate::expr::expr::Expr;
 use frontend_library::error::FrontendResult as Result;
@@ -12,7 +12,7 @@ pub struct BinaryExpr {
 }
 
 impl BinaryExpr {
-    pub fn parse(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
+    pub fn parse(peeker: &mut TokenPeeker) -> Result<Box<Expr>> {
         let mut factors = Vec::new();
         let mut operators: Vec<TokenBox<Operator>> = Vec::new();
 

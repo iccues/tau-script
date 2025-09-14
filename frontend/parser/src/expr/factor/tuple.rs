@@ -1,6 +1,6 @@
 use frontend_library::error::FrontendResult as Result;
-use frontend_library::stream::peeker::Peeker;
-use frontend_library::token::{operator::Operator, TokenBox};
+use frontend_library::token::operator::Operator;
+use lexer::token_peeker::TokenPeeker;
 
 use crate::expr::expr::Expr;
 
@@ -10,7 +10,7 @@ pub struct TupleExpr {
 }
 
 impl TupleExpr {
-    pub fn parse(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
+    pub fn parse(peeker: &mut TokenPeeker) -> Result<Box<Expr>> {
         let mut exprs = Vec::new();
         peeker.eat_eq(&Operator::OpenParen)?;
         while peeker.eat_eq(&Operator::CloseParen).is_err() {
@@ -23,7 +23,7 @@ impl TupleExpr {
         Ok(Box::new(Expr::Tuple(TupleExpr { exprs })))
     }
 
-    pub fn parse_or_group(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
+    pub fn parse_or_group(peeker: &mut TokenPeeker) -> Result<Box<Expr>> {
         let mut exprs = Vec::new();
         peeker.eat_eq(&Operator::OpenParen)?;
         exprs.push(Expr::parse(peeker)?);

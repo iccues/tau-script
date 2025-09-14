@@ -1,12 +1,11 @@
-use frontend_library::stream::peeker::Peeker;
 use frontend_library::token::keyword::Keyword;
 use frontend_library::token::{
     number::{Float, Integer},
     string::StringToken,
-    TokenBox,
 };
 
 use frontend_library::error::{FrontendError, FrontendResult as Result};
+use lexer::token_peeker::TokenPeeker;
 
 use crate::expr::expr::Expr;
 
@@ -19,7 +18,7 @@ pub enum Literal {
 }
 
 impl Literal {
-    pub fn parse(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
+    pub fn parse(peeker: &mut TokenPeeker) -> Result<Box<Expr>> {
         if let Ok(integer) = peeker.eat_type::<Integer>() {
             let value = integer.number();
             return Self::wrap_expr(Literal::Integer(value));

@@ -1,6 +1,6 @@
 use frontend_library::error::FrontendResult as Result;
-use frontend_library::stream::peeker::Peeker;
-use frontend_library::token::{operator::Operator, TokenBox};
+use frontend_library::token::operator::Operator;
+use lexer::token_peeker::TokenPeeker;
 
 use crate::expr::expr::Expr;
 
@@ -11,7 +11,7 @@ pub struct Block {
 }
 
 impl Block {
-    pub fn parse(peeker: &mut Peeker<TokenBox>) -> Result<Box<Expr>> {
+    pub fn parse(peeker: &mut TokenPeeker) -> Result<Box<Expr>> {
         peeker.eat_eq(&Operator::OpenBrace)?;
 
         let mut statments = Vec::new();
