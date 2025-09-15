@@ -1,4 +1,4 @@
-use frontend::parser::expr::factor::tuple::TupleExpr;
+use analyzer::parser::expr::factor::tuple::TupleExpr;
 use object::core::prelude::*;
 use object::ext::core_type::tuple::Tuple;
 use crate::error::ExecutorResult;

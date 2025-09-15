@@ -1,4 +1,5 @@
-use frontend::{frontend_library::token::operator::Operator, parser::expr::binary_expr::BinaryExpr};
+use analyzer::parser::expr::binary_expr::BinaryExpr;
+use analyzer::token::operator::Operator;
 use object::core::prelude::*;
 use object::ext::tuple;
 

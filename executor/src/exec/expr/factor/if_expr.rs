@@ -1,7 +1,7 @@
 use object::core::prelude::*;
 use object::{ext::object_ext::ObjectExt, types::{primitive::bool::ObjBool, unit::undefined::Undefined}};
 use crate::error::ExecutorResult;
-use frontend::parser::expr::factor::if_expr::IfExpr;
+use analyzer::parser::expr::factor::if_expr::IfExpr;
 use crate::exec::Exec;
 
 impl Exec for IfExpr {

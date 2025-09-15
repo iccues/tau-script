@@ -3,19 +3,19 @@ pub mod error;
 
 use std::io::{Read, Write};
 
-use frontend::lexer::token_peeker::TokenPeeker;
+use analyzer::lexer::token_peeker::TokenPeeker;
 use object::core::prelude::*;
 use object::ext::tuple;
 use object::types::env::prelude;
 use object::ext::core_type::string::ObjString;
-use frontend::parser::parse_stmt;
+use analyzer::parser::parse_stmt;
 use exec::Exec;
 use object::types::env::local::ObjLocal;
 
 use crate::error::ExecutorResult;
 
 pub fn execute(input: impl Read + 'static, output: &mut impl Write) {
-    let mut lexer = frontend::lexer::get_lexer(input);
+    let mut lexer = analyzer::lexer::get_lexer(input);
     let env: Object = ObjLocal::from_prelude(prelude::prelude.clone());
 
     loop {

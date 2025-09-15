@@ -1,5 +1,5 @@
 use object::core::prelude::*;
-use frontend::parser::stmt::Stmt;
+use analyzer::parser::stmt::Stmt;
 use crate::error::ExecutorResult;
 use crate::exec::Exec;
 

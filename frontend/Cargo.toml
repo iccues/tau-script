@@ -1,9 +1,0 @@
-[package]
-name = "frontend"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]
-frontend-library = { path = "frontend-library" }
-lexer = { path = "lexer" }
-parser = { path = "parser" }

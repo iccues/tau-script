@@ -3,35 +3,19 @@
 version = 4
 
 [[package]]
+name = "analyzer"
+version = "0.1.0"
+dependencies = [
+ "thiserror",
+]
+
+[[package]]
 name = "executor"
 version = "0.1.0"
 dependencies = [
- "frontend",
+ "analyzer",
  "object",
  "thiserror",
-]
-
-[[package]]
-name = "frontend"
-version = "0.1.0"
-dependencies = [
- "frontend-library",
- "lexer",
- "parser",
-]
-
-[[package]]
-name = "frontend-library"
-version = "0.1.0"
-dependencies = [
- "thiserror",
-]
-
-[[package]]
-name = "lexer"
-version = "0.1.0"
-dependencies = [
- "frontend-library",
 ]
 
 [[package]]
@@ -75,14 +59,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "parser"
-version = "0.1.0"
-dependencies = [
- "frontend-library",
- "lexer",
-]
-
-[[package]]
 name = "proc-macro2"
 version = "1.0.95"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -116,8 +92,6 @@ name = "tau-script"
 version = "0.1.0"
 dependencies = [
  "executor",
- "frontend",
- "object",
 ]
 
 [[package]]

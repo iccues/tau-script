@@ -6,5 +6,5 @@ edition = "2024"
 [dependencies]
 thiserror = "2"
 
-frontend = { path = "../frontend" }
+analyzer = { path = "../analyzer" }
 object = { path = "../object" }

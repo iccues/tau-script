@@ -6,17 +6,10 @@ edition = "2024"
 [dependencies]
 executor = { path = "executor" }
 
-[dev-dependencies]
-frontend = { path = "frontend" }
-object = { path = "object" }
-
 
 [workspace]
 members = [
-    "frontend",
-    "frontend/lexer",
-    "frontend/parser",
-    "frontend/frontend-library",
+    "analyzer",
 
     "object",
     "object/object-core",

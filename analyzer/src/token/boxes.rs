@@ -1,0 +1,47 @@
+use std::ops::Deref;
+use std::rc::Rc;
+use crate::error::{FrontendError, FrontendResult};
+use crate::token::traits::Token;
+
+#[derive(Debug)]
+pub enum TokenBox<T: 'static + ?Sized + Token = dyn Token> {
+    Rc(Rc<T>),
+    Ref(&'static T),
+}
+
+impl<T: ?Sized + Token> TokenBox<T> {
+    pub fn downcast<U: Token>(&self) -> FrontendResult<TokenBox<U>> {
+        match self {
+            TokenBox::Rc(r) => {
+                r.clone().into_any()
+                    .downcast::<U>()
+                    .ok()
+                    .map(|c| TokenBox::Rc(c))
+            }
+            TokenBox::Ref(r) => {
+                r.as_any()
+                    .downcast_ref::<U>()
+                    .map(|r| TokenBox::Ref(r))
+            }
+        }.ok_or(FrontendError::DowncastFailed)
+    }
+}
+
+impl<T: ?Sized + Token> Deref for TokenBox<T> {
+    type Target = T;
+    fn deref(&self) -> &Self::Target {
+        match self {
+            TokenBox::Rc(b) => b,
+            TokenBox::Ref(r) => r,
+        }
+    }
+}
+
+impl<T: ?Sized + Token> Clone for TokenBox<T> {
+    fn clone(&self) -> Self {
+        match self {
+            TokenBox::Rc(b) => TokenBox::Rc(b.clone()),
+            TokenBox::Ref(r) => TokenBox::Ref(r),
+        }
+    }
+}

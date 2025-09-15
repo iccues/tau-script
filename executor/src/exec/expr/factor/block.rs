@@ -1,5 +1,5 @@
 use object::core::prelude::*;
-use frontend::parser::expr::factor::block::Block;
+use analyzer::parser::expr::factor::block::Block;
 use object::types::unit::undefined::Undefined;
 
 use crate::{error::ExecutorResult, exec::Exec};

@@ -1,4 +1,4 @@
-use frontend::parser::expr::factor::while_expr::WhileExpr;
+use analyzer::parser::expr::factor::while_expr::WhileExpr;
 use object::core::prelude::*;
 use object::{ext::object_ext::ObjectExt, types::{primitive::bool::ObjBool, unit::undefined::Undefined}};
 use crate::error::ExecutorResult;
