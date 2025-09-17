@@ -24,7 +24,8 @@ if (a == b) {
 
 #[test]
 fn test_lexer() {
-    let mut lexer = get_lexer(INPUT.as_bytes());
+    let source = String::from(INPUT);
+    let mut lexer = get_lexer(&source);
 
     // Comments
     assert!(lexer.next().unwrap().eq(&*Comment::new(Some(" This is a short comment".to_string()))));

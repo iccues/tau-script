@@ -11,14 +11,12 @@ pub fn parse_stmt(peeker: &mut TokenPeeker) -> Result<Stmt> {
 
 #[cfg(test)]
 mod tests {
-    use std::io::Cursor;
-
     use super::*;
 
     #[test]
     fn test_stmt_parser() {
-        let input = Cursor::new("1 + (2 + 3);");
-        let mut lexer = crate::lexer::get_lexer(input);
+        let input = String::from("1 + (2 + 3);");
+        let mut lexer = crate::lexer::get_lexer(&input);
     
         Stmt::parse(&mut lexer).unwrap();
     }

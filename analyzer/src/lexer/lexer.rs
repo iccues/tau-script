@@ -1,8 +1,8 @@
 use crate::error::{FrontendError, FrontendResult as Result};
+use crate::source::cursor::Cursor;
 use crate::token::keyword::Keyword;
 
 use crate::source::EOF_CHAR;
-use crate::library::stream::peeker::Peeker;
 use crate::token::comment::Comment;
 use crate::token::identifier::Identifier;
 use crate::token::number::{Float, Integer};
@@ -13,14 +13,14 @@ use crate::token::TokenBox;
 use crate::try_parse;
 
 
-pub struct Lexer {
-    char_peeker: Peeker<char>,
+pub struct Lexer<'src> {
+    char_peeker: Cursor<'src>,
 }
 
 
-impl Lexer {
-    pub fn new(char_peeker: Peeker<char>) -> Self {
-        Self {
+impl Lexer<'_> {
+    pub fn new<'src>(char_peeker: Cursor<'src>) -> Lexer<'src> {
+        Lexer {
             char_peeker,
         }
     }

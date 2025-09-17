@@ -21,7 +21,8 @@ if (a == b) {
 
 #[test]
 fn test_parser() {
-    let mut lexer = get_lexer(INPUT.as_bytes());
+    let source = String::from(INPUT);
+    let mut lexer = get_lexer(&source);
 
     // a = 10;
     assert_eq!(

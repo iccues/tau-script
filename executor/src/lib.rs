@@ -4,6 +4,7 @@ pub mod error;
 use std::io::{Read, Write};
 
 use analyzer::lexer::token_peeker::TokenPeeker;
+use analyzer::source::repl_source::ReplSource;
 use object::core::prelude::*;
 use object::ext::tuple;
 use object::types::env::prelude;
@@ -15,7 +16,8 @@ use object::types::env::local::ObjLocal;
 use crate::error::ExecutorResult;
 
 pub fn execute(input: impl Read + 'static, output: &mut impl Write) {
-    let mut lexer = analyzer::lexer::get_lexer(input);
+    let source = ReplSource::new(input);
+    let mut lexer = analyzer::lexer::get_lexer(&source);
     let env: Object = ObjLocal::from_prelude(prelude::prelude.clone());
 
     loop {

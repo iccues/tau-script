@@ -4,14 +4,14 @@ use crate::token::{Token, TokenBox};
 
 use crate::lexer::lexer::Lexer;
 
-pub struct TokenPeeker {
-    inner: Lexer,
+pub struct TokenPeeker<'src> {
+    inner: Lexer<'src>,
     buffer: VecDeque<FrontendResult<TokenBox>>,
 }
 
-impl TokenPeeker {
-    pub fn new(inner: Lexer) -> Self {
-        Self {
+impl TokenPeeker<'_> {
+    pub fn new<'src>(inner: Lexer<'src>) -> TokenPeeker<'src> {
+        TokenPeeker {
             inner,
             buffer: VecDeque::new(),
         }
