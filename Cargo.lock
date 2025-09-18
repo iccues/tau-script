@@ -91,7 +91,9 @@ dependencies = [
 name = "tau-script"
 version = "0.1.0"
 dependencies = [
+ "analyzer",
  "executor",
+ "object",
 ]
 
 [[package]]

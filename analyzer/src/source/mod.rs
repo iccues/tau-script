@@ -1,6 +1,7 @@
 pub mod cursor;
 pub mod str_source;
 pub mod repl_source;
+pub mod file_source;
 
 
 use crate::error::FrontendResult as Result;

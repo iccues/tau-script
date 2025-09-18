@@ -1,7 +1,41 @@
-use executor::execute;
-use std::io::{stdin, stdout};
+use analyzer::{lexer::get_lexer, source::{file_source::FileSource, repl_source::ReplSource}};
+use executor::vm::VM;
+use std::{env::args, io::stdin};
 
 fn main() {
     println!("Hello from tau-script!");
-    execute(stdin(), &mut stdout());
+
+    if let Some(path) = args().nth(1) {
+        run_file(path);
+    } else {
+        run_repl();
+    }    
+}
+
+fn run_repl() {
+    let vm = VM::new();
+
+    let source = ReplSource::new(stdin());
+    let mut lexer = get_lexer(&source);
+
+    loop {
+        if let Err(err) = vm.run_stmt_print(&mut lexer) {
+            println!("{}", err);
+            break;
+        }
+    }
+}
+
+fn run_file(path: String) {
+    let vm = VM::new();
+
+    let source = FileSource::new(&path).unwrap();
+    let mut lexer = get_lexer(&source);
+
+    loop {
+        if let Err(err) = vm.run_stmt_print(&mut lexer) {
+            println!("{}", err);
+            break;
+        }
+    }
 }
