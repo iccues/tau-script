@@ -7,6 +7,7 @@ edition = "2024"
 executor = { path = "executor" }
 analyzer = { path = "analyzer" }
 object = { path = "object" }
+clap = { version = "4.5.47", features = ["derive"] }
 
 
 [workspace]
