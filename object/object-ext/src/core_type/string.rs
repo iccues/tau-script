@@ -1,6 +1,6 @@
 use object_core::prelude::*;
 use crate::object_trait_ext::ObjectTraitExt;
-use crate::matches_;
+use crate::match_as;
 use crate::core_type::callable::{closure::Closure, rust_func::RustFunc};
 
 #[derive(Debug, ObjectTrait)]
@@ -34,7 +34,8 @@ impl ObjString {
     }
 
     fn to_string(input: Object) -> Object {
-        matches_!((a: ObjString, ()) = input);
+        // matches_!((a: ObjString, ()) = input);
+        let (a, _) = match_as!((ObjString, ()), input).unwrap();
         ObjString::new(a.value.clone())
     }
 }

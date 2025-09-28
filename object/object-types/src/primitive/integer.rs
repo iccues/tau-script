@@ -1,6 +1,6 @@
 use object_core::prelude::*;
 use object_ext::object_trait_ext::ObjectTraitExt;
-use object_ext::matches_;
+use object_ext::match_as;
 use object_ext::core_type::callable::{closure::Closure, rust_func::RustFunc};
 use crate::primitive::bool::ObjBool;
 use object_ext::core_type::string::ObjString;
@@ -40,22 +40,26 @@ impl ObjI64 {
     }
 
     fn add(input: Object) -> Object {
-        matches_!((a: ObjI64, (b: ObjI64)) = input);
+        // matches_!((a: ObjI64, (b: ObjI64)) = input);
+        let (a, (b,)) = match_as!((ObjI64, (ObjI64)), input).unwrap();
         ObjI64::new(a.value + b.value)
     }
 
     fn to_string(input: Object) -> Object {
-        matches_!((a: ObjI64, ()) = input);
+        // matches_!((a: ObjI64, ()) = input);
+        let (a, _) = match_as!((ObjI64, ()), input).unwrap();
         ObjString::new(a.value.to_string())
     }
 
     fn eq(input: Object) -> Object {
-        matches_!((a: ObjI64, (b: ObjI64)) = input);
+        // matches_!((a: ObjI64, (b: ObjI64)) = input);
+        let (a, (b,)) = match_as!((ObjI64, (ObjI64)), input).unwrap();
         ObjBool::new(a.value == b.value)
     }
 
     fn ne(input: Object) -> Object {
-        matches_!((a: ObjI64, (b: ObjI64)) = input);
+        // matches_!((a: ObjI64, (b: ObjI64)) = input);
+        let (a, (b,)) = match_as!((ObjI64, (ObjI64)), input).unwrap();
         ObjBool::new(a.value != b.value)
     }
 }

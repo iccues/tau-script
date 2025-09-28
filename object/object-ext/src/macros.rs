@@ -1,3 +1,16 @@
+pub type MatchResult<T> = Result<T, MatchError>;
+
+#[derive(Debug)]
+pub enum MatchError {
+    DowncastFailed {
+        expected: &'static str,
+        actual: String,
+    },
+    NotEnoughElements,
+    TooManyElements,
+}
+
+
 #[macro_export]
 macro_rules! matches_ {
     ( $front:tt $( : $type_:ty )? = $value:expr ) => {
@@ -39,6 +52,42 @@ macro_rules! matches_back {
                 panic!("Too many elements in tuple");
             }
             tuple
+        }
+    };
+}
+
+
+#[macro_export]
+macro_rules! match_as {
+    (( $( $types:tt ),* $(,)? ), $value:expr) => {
+        (|| {
+            let tuple = $crate::match_as!($crate::core_type::tuple::Tuple, $value)?;
+            let mut elements = tuple.get_vec().into_iter();
+
+            let result = (
+                $(
+                    {
+                        let element = elements.next()
+                            .ok_or($crate::macros::MatchError::NotEnoughElements)?;
+                        $crate::match_as!($types, element)?
+                    },
+                )*
+            );
+
+            if elements.next().is_some() {
+                return Err($crate::macros::MatchError::TooManyElements);
+            }
+            Ok(result)
+        })()
+    };
+    ($type_:ty, $value:expr) => {
+        {
+            use $crate::object_ext::ObjectExt;
+            $value.match_downcast::<$type_>()
+                .map_err(|_| $crate::macros::MatchError::DowncastFailed {
+                    expected: stringify!($type_),
+                    actual: $value.to_string(),
+                })
         }
     };
 }
