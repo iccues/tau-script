@@ -1,5 +1,5 @@
 use crate::try_parse;
-use crate::error::{FrontendError, FrontendResult as Result};
+use crate::error::{AnalyzerError, Result};
 use crate::token::TokenBox;
 use crate::token::identifier::Identifier;
 use crate::token::operator::Operator;
@@ -67,7 +67,7 @@ impl Expr {
         try_parse!(TupleExpr::parse_or_group(peeker));
         try_parse!(Self::parse_id(peeker));
         try_parse!(Self::parse_unary(peeker));
-        Err(FrontendError::None)
+        Err(AnalyzerError::None)
     }
 
     fn parse_id(peeker: &mut TokenPeeker) -> Result<Box<Expr>> {
@@ -84,7 +84,7 @@ impl Expr {
             let expr = Self::parse(peeker)?;
             Ok(Box::new(Expr::UnaryExpr { operator, expr }))
         } else {
-            Err(FrontendError::None)
+            Err(AnalyzerError::None)
         }
     }
 }

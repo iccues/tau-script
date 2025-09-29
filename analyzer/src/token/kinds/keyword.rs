@@ -1,7 +1,7 @@
 use std::sync::LazyLock;
 
-use crate::error::FrontendError;
-use crate::error::FrontendResult as Result;
+use crate::error::AnalyzerError;
+use crate::error::Result;
 use crate::token::identifier::Identifier;
 use crate::token::Token;
 use crate::token::TokenBox;
@@ -54,7 +54,7 @@ impl Keyword {
 
             "true" => Ok(TRUE_KEYWORD.clone()),
             "false" => Ok(FALSE_KEYWORD.clone()),
-            _ => Err(FrontendError::None),
+            _ => Err(AnalyzerError::None),
         }
     }
 }

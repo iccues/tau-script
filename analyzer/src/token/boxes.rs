@@ -1,6 +1,6 @@
 use std::ops::Deref;
 use std::rc::Rc;
-use crate::error::{FrontendError, FrontendResult};
+use crate::error::{AnalyzerError, Result};
 use crate::token::traits::Token;
 
 #[derive(Debug)]
@@ -15,13 +15,13 @@ impl TokenBox {
 }
 
 impl TokenBox {
-    pub fn downcast<U: Token>(&self) -> FrontendResult<TokenBox<U>> {
+    pub fn downcast<U: Token>(&self) -> Result<TokenBox<U>> {
         self.kind.clone().into_any()
             .downcast::<U>()
             .map(|c| TokenBox {
                 kind: c,
             })
-            .map_err(|_| FrontendError::DowncastFailed(
+            .map_err(|_| AnalyzerError::DowncastFailed(
                 std::any::type_name::<U>(),
             ))
     }

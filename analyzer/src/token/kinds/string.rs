@@ -1,4 +1,4 @@
-use crate::error::FrontendResult;
+use crate::error::Result;
 use crate::token::Token;
 use crate::token::TokenBox;
 
@@ -9,7 +9,7 @@ pub struct StringToken {
 }
 
 impl StringToken {
-    pub fn new(string: String) -> FrontendResult<TokenBox> {
+    pub fn new(string: String) -> Result<TokenBox> {
         let string = string[1..string.len() - 1].to_string();
         Ok(TokenBox::new(Self { string }))
     }

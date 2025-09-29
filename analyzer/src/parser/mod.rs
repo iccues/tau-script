@@ -1,6 +1,6 @@
 use crate::lexer::token_peeker::TokenPeeker;
 use stmt::Stmt;
-use crate::error::FrontendResult as Result;
+use crate::error::Result;
 
 pub mod expr;
 pub mod stmt;

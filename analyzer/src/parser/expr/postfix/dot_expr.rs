@@ -2,7 +2,7 @@ use crate::token::{identifier::Identifier, operator::Operator};
 use crate::lexer::token_peeker::TokenPeeker;
 
 use crate::parser::expr::expr::Expr;
-use crate::error::FrontendResult as Result;
+use crate::error::Result;
 
 #[derive(Debug)]
 pub struct DotExpr {

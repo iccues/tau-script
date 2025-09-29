@@ -6,7 +6,7 @@ use crate::lexer::lexer::Lexer;
 
 pub struct TokenPeeker<'src> {
     inner: Lexer<'src>,
-    buffer: VecDeque<FrontendResult<TokenBox>>,
+    buffer: VecDeque<Result<TokenBox>>,
 }
 
 impl TokenPeeker<'_> {
@@ -22,32 +22,32 @@ impl TokenPeeker<'_> {
         self.buffer.push_back(item);
     }
 
-    pub fn peek(&mut self) -> FrontendResult<TokenBox> {
+    pub fn peek(&mut self) -> Result<TokenBox> {
         if self.buffer.is_empty() {
             self.get_next();
         }
         self.buffer[0].clone()
     }
 
-    pub fn next(&mut self) -> FrontendResult<TokenBox> {
+    pub fn next(&mut self) -> Result<TokenBox> {
         if self.buffer.is_empty() {
             self.get_next();
         }
         self.buffer.pop_front().unwrap()
     }
 
-    pub fn eat_type<T: Token>(&mut self) -> FrontendResult<TokenBox<T>> {
+    pub fn eat_type<T: Token>(&mut self) -> Result<TokenBox<T>> {
         let item = self.peek()?.downcast()?;
         let _ = self.next();
         Ok(item)
     }
 
-    pub fn eat_eq(&mut self, value: &dyn Token) -> FrontendResult<()> {
+    pub fn eat_eq(&mut self, value: &dyn Token) -> Result<()> {
         if self.peek()?.eq(value) {
             let _ = self.next();
             Ok(())
         } else {
-            Err(FrontendError::None)
+            Err(AnalyzerError::None)
         }
     }
 }

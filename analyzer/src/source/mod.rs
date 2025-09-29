@@ -4,7 +4,7 @@ pub mod repl_source;
 pub mod file_source;
 
 
-use crate::error::FrontendResult as Result;
+use crate::error::Result;
 
 
 pub const EOF_CHAR: char = '\0';

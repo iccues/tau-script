@@ -1,4 +1,4 @@
-use crate::error::FrontendResult as Result;
+use crate::error::Result;
 use crate::token::operator::Operator;
 use crate::lexer::token_peeker::TokenPeeker;
 

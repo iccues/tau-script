@@ -1,9 +1,9 @@
 use std::rc::Rc;
 
-pub type FrontendResult<T> = Result<T, FrontendError>;
+pub type Result<T> = std::result::Result<T, AnalyzerError>;
 
 #[derive(Debug, thiserror::Error, Clone)]
-pub enum FrontendError {
+pub enum AnalyzerError {
     #[error("IO error: {0}")]
     Io(Rc<std::io::Error>),
 
@@ -23,15 +23,15 @@ pub enum FrontendError {
     UnknownToken,
 }
 
-impl From<std::io::Error> for FrontendError {
+impl From<std::io::Error> for AnalyzerError {
     fn from(err: std::io::Error) -> Self {
-        FrontendError::Io(Rc::new(err))
+        AnalyzerError::Io(Rc::new(err))
     }
 }
 
-impl FrontendError {
+impl AnalyzerError {
     pub fn is_fatal(&self) -> bool {
-        matches!(self, FrontendError::Io(_) | FrontendError::UnknownToken)
+        matches!(self, AnalyzerError::Io(_) | AnalyzerError::UnknownToken)
     }
 }
 

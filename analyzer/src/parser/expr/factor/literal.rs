@@ -4,7 +4,7 @@ use crate::token::{
     string::StringToken,
 };
 
-use crate::error::{FrontendError, FrontendResult as Result};
+use crate::error::{AnalyzerError, Result};
 use crate::lexer::token_peeker::TokenPeeker;
 
 use crate::parser::expr::expr::Expr;
@@ -37,7 +37,7 @@ impl Literal {
         if peeker.eat_eq(&Keyword::False).is_ok() {
             return Self::wrap_expr(Literal::Bool(false));
         }
-        Err(FrontendError::None)
+        Err(AnalyzerError::None)
     }
 
     fn wrap_expr(literal: Literal) -> Result<Box<Expr>> {

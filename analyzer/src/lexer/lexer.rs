@@ -1,4 +1,4 @@
-use crate::error::{FrontendError, FrontendResult as Result};
+use crate::error::{AnalyzerError, Result};
 use crate::source::cursor::Cursor;
 use crate::token::keyword::Keyword;
 
@@ -35,7 +35,7 @@ impl Lexer<'_> {
         try_parse!(self.parse_operator());
         try_parse!(self.parse_eof());
 
-        Err(FrontendError::UnknownToken)
+        Err(AnalyzerError::UnknownToken)
     }
 
     fn skip_whitespace(&mut self) -> Result<()> {
@@ -53,7 +53,7 @@ impl Lexer<'_> {
     fn parse_comment(&mut self) -> Result<TokenBox> {
         try_parse!(self.parse_comment_short());
         try_parse!(self.parse_comment_long());
-        Err(FrontendError::None)
+        Err(AnalyzerError::None)
     }
     fn parse_comment_short(&mut self) -> Result<TokenBox> {
         self.char_peeker.eat_str("//")?;
@@ -71,7 +71,7 @@ impl Lexer<'_> {
         loop {
             match self.char_peeker.eat_str("*/") {
                 Ok(()) => return Ok(Comment::new(Some(text))),
-                Err(FrontendError::None) => {
+                Err(AnalyzerError::None) => {
                     let c = self.char_peeker.next()?;
                     text.push(c);
                 },
@@ -102,7 +102,7 @@ impl Lexer<'_> {
         }
 
         else {
-            Err(FrontendError::None)
+            Err(AnalyzerError::None)
         }
     }
 
@@ -129,7 +129,7 @@ impl Lexer<'_> {
         }
 
         else {
-            Err(FrontendError::None)
+            Err(AnalyzerError::None)
         }
     }
 
@@ -147,7 +147,7 @@ impl Lexer<'_> {
             string.push(self.char_peeker.next()?);
             StringToken::new(string)
         } else {
-            Err(FrontendError::None)
+            Err(AnalyzerError::None)
         }
     }
 
@@ -164,7 +164,7 @@ impl Lexer<'_> {
             Ok(token_type)
         }
         else {
-            Err(FrontendError::None)
+            Err(AnalyzerError::None)
         }
     }
 
@@ -172,7 +172,7 @@ impl Lexer<'_> {
         if self.char_peeker.peek()? == EOF_CHAR {
             Ok(EofToken::new())
         } else {
-            Err(FrontendError::None)
+            Err(AnalyzerError::None)
         }
     }
 }

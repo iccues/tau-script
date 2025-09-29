@@ -1,6 +1,6 @@
 use std::{fs::File, io::Read};
 
-use crate::{error::FrontendResult, source::Source};
+use crate::{error::Result, source::Source};
 
 pub struct FileSource {
     buffer: String
@@ -17,11 +17,11 @@ impl FileSource {
 }
 
 impl Source for FileSource {
-    fn get_char(&self, index: usize) -> FrontendResult<char> {
+    fn get_char(&self, index: usize) -> Result<char> {
         self.buffer.get_char(index)
     }
 
-    fn next_index(&self, index: usize) -> FrontendResult<usize> {
+    fn next_index(&self, index: usize) -> Result<usize> {
         self.buffer.next_index(index)
     }
 }

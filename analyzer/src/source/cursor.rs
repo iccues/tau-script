@@ -1,4 +1,4 @@
-use crate::{error::{FrontendError, FrontendResult}, source::Source};
+use crate::{error::{AnalyzerError, Result}, source::Source};
 
 #[derive(Clone, Copy)]
 pub struct Cursor<'src> {
@@ -11,28 +11,28 @@ impl Cursor<'_> {
         Cursor { source, index: 0 }
     }
 
-    pub fn next(&mut self) -> FrontendResult<char> {
+    pub fn next(&mut self) -> Result<char> {
         let (ch, next_index) = self.source.next(self.index)?;
         self.index = next_index;
         Ok(ch)
     }
 
-    pub fn peek(&self) -> FrontendResult<char> {
+    pub fn peek(&self) -> Result<char> {
         self.source.get_char(self.index)
     }
 
-    pub fn eat_str(&mut self, s: &str) -> FrontendResult<()> {
+    pub fn eat_str(&mut self, s: &str) -> Result<()> {
         let mut cursor = *self;
         for ch in s.chars() {
             if cursor.next()? != ch {
-                return Err(FrontendError::None);
+                return Err(AnalyzerError::None);
             }
         }
         *self = cursor;
         Ok(())
     }
 
-    pub fn peek_str(&self, n: usize) -> FrontendResult<String> {
+    pub fn peek_str(&self, n: usize) -> Result<String> {
         let mut cursor = *self;
         let mut result = String::new();
         for _ in 0..n {

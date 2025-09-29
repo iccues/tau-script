@@ -1,8 +1,8 @@
-use crate::{error::FrontendResult, source::{Source, EOF_CHAR}};
+use crate::{error::Result, source::{Source, EOF_CHAR}};
 
 
 impl Source for String {
-    fn get_char(&self, index: usize) -> FrontendResult<char> {
+    fn get_char(&self, index: usize) -> Result<char> {
         if index >= self.len() {
             return Ok(EOF_CHAR);
         }
@@ -11,7 +11,7 @@ impl Source for String {
         Ok(chars.next().unwrap_or(EOF_CHAR))
     }
 
-    fn next_index(&self, index: usize) -> FrontendResult<usize> {
+    fn next_index(&self, index: usize) -> Result<usize> {
         if index >= self.len() {
             return Ok(index);
         }

@@ -1,7 +1,7 @@
 use std::io::{BufRead, BufReader, Read};
 use std::sync::{Mutex, RwLock};
 
-use crate::{error::FrontendResult, source::{Source, EOF_CHAR}};
+use crate::{error::Result, source::{Source, EOF_CHAR}};
 
 pub struct ReplSource {
     input: Mutex<Box<dyn BufRead>>,
@@ -27,7 +27,7 @@ impl ReplSource {
     }
 
 
-    fn load(&self, index: usize) -> FrontendResult<()> {
+    fn load(&self, index: usize) -> Result<()> {
         loop {
             if self.buffer().get_char(index)? != EOF_CHAR {
                 break;
@@ -42,12 +42,12 @@ impl ReplSource {
 }
 
 impl Source for ReplSource {
-    fn get_char(&self, index: usize) -> FrontendResult<char> {
+    fn get_char(&self, index: usize) -> Result<char> {
         self.load(index)?;
         self.buffer().get_char(index)
     }
 
-    fn next_index(&self, index: usize) -> FrontendResult<usize> {
+    fn next_index(&self, index: usize) -> Result<usize> {
         self.load(index)?;
         self.buffer().next_index(index)
     }

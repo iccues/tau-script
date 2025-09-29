@@ -9,5 +9,5 @@ pub enum Executor {
     ObjectError(#[from] object::core::error::ObjectError),
 
     #[error("{0}")]
-    FrontendError(#[from] analyzer::error::FrontendError),
+    AnalyzerError(#[from] analyzer::error::AnalyzerError),
 }
