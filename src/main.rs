@@ -1,10 +1,9 @@
-mod args;
-mod run;
+use tau_script;
 
 use clap::Parser;
 
-use crate::args::Args;
-use crate::run::{run_repl, run_file};
+use tau_script::args::Args;
+use tau_script::run::{run_repl, run_file};
 
 
 fn main() {

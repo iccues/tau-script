@@ -18,6 +18,7 @@ impl ObjectTraitExt for ObjListTypeType {
         match name {
             "to_string" => Some(Closure::new(RustFunc::new(ObjList::to_string), 3)),
             "insert" => Some(Closure::new(RustFunc::new(ObjList::insert), 3)),
+            "get" => Some(Closure::new(RustFunc::new(ObjList::get), 3)),
             _ => None,
         }
     }
@@ -90,9 +91,14 @@ impl ObjList {
     fn insert(input: Object) -> Object {
         matches_!((list_type: ObjListType, list: ObjList, (index: ObjI64, element)) = input);
         if list_type.type_.match_(element.clone()).is_none() {
-                panic!("Unmatched input");
-            }
+            panic!("Unmatched input");
+        }
         list.elements.borrow_mut().insert(index.value as usize, element);
         tuple!()
+    }
+
+    fn get(input: Object) -> Object {
+        matches_!((_list_type: ObjListType, list: ObjList, (index: ObjI64)) = input);
+        list.elements.borrow()[index.value as usize].clone()
     }
 }
