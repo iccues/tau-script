@@ -16,8 +16,8 @@ pub enum FrontendError {
     #[error("")]
     None,
 
-    #[error("")]
-    DowncastFailed,
+    #[error("Failed to downcast token to type {0}")]
+    DowncastFailed(&'static str),
 
     #[error("Unknown token encountered")]
     UnknownToken,

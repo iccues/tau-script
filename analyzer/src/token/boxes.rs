@@ -14,14 +14,16 @@ impl TokenBox {
     }
 }
 
-impl<T: ?Sized + Token> TokenBox<T> {
+impl TokenBox {
     pub fn downcast<U: Token>(&self) -> FrontendResult<TokenBox<U>> {
         self.kind.clone().into_any()
             .downcast::<U>()
             .map(|c| TokenBox {
                 kind: c,
             })
-            .map_err(|_| FrontendError::DowncastFailed)
+            .map_err(|_| FrontendError::DowncastFailed(
+                std::any::type_name::<U>(),
+            ))
     }
 }
 
