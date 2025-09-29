@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use crate::token::Token;
 use crate::token::TokenBox;
 
@@ -13,7 +11,7 @@ impl Token for Identifier {}
 
 impl Identifier {
     pub fn new(name: String) -> TokenBox {
-        TokenBox::Rc(Rc::new(Identifier { name }))
+        TokenBox::new(Identifier { name })
     }
 
     pub fn name(&self) -> String {

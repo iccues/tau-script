@@ -1,3 +1,5 @@
+use std::sync::LazyLock;
+
 use crate::token::Token;
 use crate::token::TokenBox;
 
@@ -69,77 +71,77 @@ pub enum Operator {
 
 }
 
-const SEMI_SINGLETON: Operator = Operator::Semi;
-const COMMA_SINGLETON: Operator = Operator::Comma;
-const DOT_SINGLETON: Operator = Operator::Dot;
-const OPEN_PAREN_SINGLETON: Operator = Operator::OpenParen;
-const CLOSE_PAREN_SINGLETON: Operator = Operator::CloseParen;
-const OPEN_BRACE_SINGLETON: Operator = Operator::OpenBrace;
-const CLOSE_BRACE_SINGLETON: Operator = Operator::CloseBrace;
-const OPEN_BRACKET_SINGLETON: Operator = Operator::OpenBracket;
-const CLOSE_BRACKET_SINGLETON: Operator = Operator::CloseBracket;
-const AT_SINGLETON: Operator = Operator::At;
-const POUND_SINGLETON: Operator = Operator::Pound;
-const TILDE_SINGLETON: Operator = Operator::Tilde;
-const QUESTION_SINGLETON: Operator = Operator::Question;
-const COLON_SINGLETON: Operator = Operator::Colon;
-const DOLLAR_SINGLETON: Operator = Operator::Dollar;
-const EQ_SINGLETON: Operator = Operator::Eq;
-const BANG_SINGLETON: Operator = Operator::Bang;
-const LT_SINGLETON: Operator = Operator::Lt;
-const GT_SINGLETON: Operator = Operator::Gt;
-const MINUS_SINGLETON: Operator = Operator::Minus;
-const AND_SINGLETON: Operator = Operator::And;
-const OR_SINGLETON: Operator = Operator::Or;
-const PLUS_SINGLETON: Operator = Operator::Plus;
-const STAR_SINGLETON: Operator = Operator::Star;
-const SLASH_SINGLETON: Operator = Operator::Slash;
-const CARET_SINGLETON: Operator = Operator::Caret;
-const PERCENT_SINGLETON: Operator = Operator::Percent;
+const SEMI_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Semi));
+const COMMA_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Comma));
+const DOT_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Dot));
+const OPEN_PAREN_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::OpenParen));
+const CLOSE_PAREN_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::CloseParen));
+const OPEN_BRACE_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::OpenBrace));
+const CLOSE_BRACE_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::CloseBrace));
+const OPEN_BRACKET_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::OpenBracket));
+const CLOSE_BRACKET_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::CloseBracket));
+const AT_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::At));
+const POUND_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Pound));
+const TILDE_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Tilde));
+const QUESTION_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Question));
+const COLON_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Colon));
+const DOLLAR_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Dollar));
+const EQ_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Eq));
+const BANG_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Bang));
+const LT_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Lt));
+const GT_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Gt));
+const MINUS_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Minus));
+const AND_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::And));
+const OR_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Or));
+const PLUS_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Plus));
+const STAR_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Star));
+const SLASH_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Slash));
+const CARET_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Caret));
+const PERCENT_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::Percent));
 
-const DOUBLE_COLON_SINGLETON: Operator = Operator::DoubleColon;
-const DOUBLE_EQ_SINGLETON: Operator = Operator::DoubleEq;
-const NOT_EQ_SINGLETON: Operator = Operator::NotEq;
+const DOUBLE_COLON_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::DoubleColon));
+const DOUBLE_EQ_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::DoubleEq));
+const NOT_EQ_SINGLETON: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Operator::NotEq));
 
 impl Operator {
     pub fn parse_complex(s: &str) -> Option<TokenBox> {
         match s {
-            "::" => Some(TokenBox::Ref(&DOUBLE_COLON_SINGLETON)),
-            "==" => Some(TokenBox::Ref(&DOUBLE_EQ_SINGLETON)),
-            "!=" => Some(TokenBox::Ref(&NOT_EQ_SINGLETON)),
+            "::" => Some(DOUBLE_COLON_SINGLETON.clone()),
+            "==" => Some(DOUBLE_EQ_SINGLETON.clone()),
+            "!=" => Some(NOT_EQ_SINGLETON.clone()),
             _ => None,
         }
     }
 
     pub fn parse(c: char) -> Option<TokenBox> {
         match c {
-            ';' => Some(TokenBox::Ref(&SEMI_SINGLETON)),
-            ',' => Some(TokenBox::Ref(&COMMA_SINGLETON)),
-            '.' => Some(TokenBox::Ref(&DOT_SINGLETON)),
-            '(' => Some(TokenBox::Ref(&OPEN_PAREN_SINGLETON)),
-            ')' => Some(TokenBox::Ref(&CLOSE_PAREN_SINGLETON)),
-            '{' => Some(TokenBox::Ref(&OPEN_BRACE_SINGLETON)),
-            '}' => Some(TokenBox::Ref(&CLOSE_BRACE_SINGLETON)),
-            '[' => Some(TokenBox::Ref(&OPEN_BRACKET_SINGLETON)),
-            ']' => Some(TokenBox::Ref(&CLOSE_BRACKET_SINGLETON)),
-            '@' => Some(TokenBox::Ref(&AT_SINGLETON)),
-            '#' => Some(TokenBox::Ref(&POUND_SINGLETON)),
-            '~' => Some(TokenBox::Ref(&TILDE_SINGLETON)),
-            '?' => Some(TokenBox::Ref(&QUESTION_SINGLETON)),
-            ':' => Some(TokenBox::Ref(&COLON_SINGLETON)),
-            '$' => Some(TokenBox::Ref(&DOLLAR_SINGLETON)),
-            '=' => Some(TokenBox::Ref(&EQ_SINGLETON)),
-            '!' => Some(TokenBox::Ref(&BANG_SINGLETON)),
-            '<' => Some(TokenBox::Ref(&LT_SINGLETON)),
-            '>' => Some(TokenBox::Ref(&GT_SINGLETON)),
-            '-' => Some(TokenBox::Ref(&MINUS_SINGLETON)),
-            '&' => Some(TokenBox::Ref(&AND_SINGLETON)),
-            '|' => Some(TokenBox::Ref(&OR_SINGLETON)),
-            '+' => Some(TokenBox::Ref(&PLUS_SINGLETON)),
-            '*' => Some(TokenBox::Ref(&STAR_SINGLETON)),
-            '/' => Some(TokenBox::Ref(&SLASH_SINGLETON)),
-            '^' => Some(TokenBox::Ref(&CARET_SINGLETON)),
-            '%' => Some(TokenBox::Ref(&PERCENT_SINGLETON)),
+            ';' => Some(SEMI_SINGLETON.clone()),
+            ',' => Some(COMMA_SINGLETON.clone()),
+            '.' => Some(DOT_SINGLETON.clone()),
+            '(' => Some(OPEN_PAREN_SINGLETON.clone()),
+            ')' => Some(CLOSE_PAREN_SINGLETON.clone()),
+            '{' => Some(OPEN_BRACE_SINGLETON.clone()),
+            '}' => Some(CLOSE_BRACE_SINGLETON.clone()),
+            '[' => Some(OPEN_BRACKET_SINGLETON.clone()),
+            ']' => Some(CLOSE_BRACKET_SINGLETON.clone()),
+            '@' => Some(AT_SINGLETON.clone()),
+            '#' => Some(POUND_SINGLETON.clone()),
+            '~' => Some(TILDE_SINGLETON.clone()),
+            '?' => Some(QUESTION_SINGLETON.clone()),
+            ':' => Some(COLON_SINGLETON.clone()),
+            '$' => Some(DOLLAR_SINGLETON.clone()),
+            '=' => Some(EQ_SINGLETON.clone()),
+            '!' => Some(BANG_SINGLETON.clone()),
+            '<' => Some(LT_SINGLETON.clone()),
+            '>' => Some(GT_SINGLETON.clone()),
+            '-' => Some(MINUS_SINGLETON.clone()),
+            '&' => Some(AND_SINGLETON.clone()),
+            '|' => Some(OR_SINGLETON.clone()),
+            '+' => Some(PLUS_SINGLETON.clone()),
+            '*' => Some(STAR_SINGLETON.clone()),
+            '/' => Some(SLASH_SINGLETON.clone()),
+            '^' => Some(CARET_SINGLETON.clone()),
+            '%' => Some(PERCENT_SINGLETON.clone()),
             _ => None,
         }
     }

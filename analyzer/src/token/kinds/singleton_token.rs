@@ -1,14 +1,16 @@
+use std::sync::LazyLock;
+
 use crate::token::Token;
 use crate::token::TokenBox;
 
 #[derive(Debug, PartialEq)]
 pub struct EofToken;
 
-const EOF_TOKEN: EofToken = EofToken;
+const EOF_TOKEN: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(EofToken));
 
 impl EofToken {
     pub fn new() -> TokenBox {
-        TokenBox::Ref(&EOF_TOKEN)
+        EOF_TOKEN.clone()
     }
 }
 

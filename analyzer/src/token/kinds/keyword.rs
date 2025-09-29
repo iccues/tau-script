@@ -1,3 +1,5 @@
+use std::sync::LazyLock;
+
 use crate::error::FrontendError;
 use crate::error::FrontendResult as Result;
 use crate::token::identifier::Identifier;
@@ -21,37 +23,37 @@ pub enum Keyword {
     False,
 }
 
-const LET_KEYWORD: Keyword = Keyword::Let;
-const MOD_KEYWORD: Keyword = Keyword::Mod;
-const DEF_KEYWORD: Keyword = Keyword::Def;
-const TYPE_KEYWORD: Keyword = Keyword::Type;
-const VAR_KEYWORD: Keyword = Keyword::Var;
-const FUNC_KEYWORD: Keyword = Keyword::Func;
-const IF_KEYWORD: Keyword = Keyword::If;
-const ELSE_KEYWORD: Keyword = Keyword::Else;
-const WHILE_KEYWORD: Keyword = Keyword::While;
-const SELF_KEYWORD: Keyword = Keyword::Self_;
+const LET_KEYWORD: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Keyword::Let));
+const MOD_KEYWORD: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Keyword::Mod));
+const DEF_KEYWORD: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Keyword::Def));
+const TYPE_KEYWORD: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Keyword::Type));
+const VAR_KEYWORD: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Keyword::Var));
+const FUNC_KEYWORD: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Keyword::Func));
+const IF_KEYWORD: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Keyword::If));
+const ELSE_KEYWORD: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Keyword::Else));
+const WHILE_KEYWORD: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Keyword::While));
+const SELF_KEYWORD: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Keyword::Self_));
 
-const TRUE_KEYWORD: Keyword = Keyword::True;
-const FALSE_KEYWORD: Keyword = Keyword::False;
+const TRUE_KEYWORD: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Keyword::True));
+const FALSE_KEYWORD: LazyLock<TokenBox> = LazyLock::new(|| TokenBox::new(Keyword::False));
 
 impl Keyword {
     pub fn parse(token: TokenBox) -> Result<TokenBox> {
         let identifier = token.downcast::<Identifier>()?;
         match &identifier.name()[..] {
-            "let" => Ok(TokenBox::Ref(&LET_KEYWORD)),
-            "mod" => Ok(TokenBox::Ref(&MOD_KEYWORD)),
-            "def" => Ok(TokenBox::Ref(&DEF_KEYWORD)),
-            "type" => Ok(TokenBox::Ref(&TYPE_KEYWORD)),
-            "var" => Ok(TokenBox::Ref(&VAR_KEYWORD)),
-            "expr" => Ok(TokenBox::Ref(&FUNC_KEYWORD)),
-            "if" => Ok(TokenBox::Ref(&IF_KEYWORD)),
-            "else" => Ok(TokenBox::Ref(&ELSE_KEYWORD)),
-            "while" => Ok(TokenBox::Ref(&WHILE_KEYWORD)),
-            "self" => Ok(TokenBox::Ref(&SELF_KEYWORD)),
+            "let" => Ok(LET_KEYWORD.clone()),
+            "mod" => Ok(MOD_KEYWORD.clone()),
+            "def" => Ok(DEF_KEYWORD.clone()),
+            "type" => Ok(TYPE_KEYWORD.clone()),
+            "var" => Ok(VAR_KEYWORD.clone()),
+            "func" => Ok(FUNC_KEYWORD.clone()),
+            "if" => Ok(IF_KEYWORD.clone()),
+            "else" => Ok(ELSE_KEYWORD.clone()),
+            "while" => Ok(WHILE_KEYWORD.clone()),
+            "self" => Ok(SELF_KEYWORD.clone()),
 
-            "true" => Ok(TokenBox::Ref(&TRUE_KEYWORD)),
-            "false" => Ok(TokenBox::Ref(&FALSE_KEYWORD)),
+            "true" => Ok(TRUE_KEYWORD.clone()),
+            "false" => Ok(FALSE_KEYWORD.clone()),
             _ => Err(FrontendError::None),
         }
     }

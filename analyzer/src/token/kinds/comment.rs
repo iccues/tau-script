@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use crate::token::Token;
 use crate::token::TokenBox;
 
@@ -10,7 +8,7 @@ pub struct Comment {
 
 impl Comment {
     pub fn new(content: Option<String>) -> TokenBox {
-        TokenBox::Rc(Rc::new(Comment { content }))
+        TokenBox::new(Comment { content })
     }
 }
 
