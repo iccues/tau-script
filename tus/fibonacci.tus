@@ -1,0 +1,10 @@
+i = 0;
+
+f = list_type(int)(1, 1);
+
+while(i != 20) {
+    f.insert(i + 2, f.get(i + 1) + f.get(i));
+    i = i + 1;
+};
+
+f;
